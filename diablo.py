@@ -1034,6 +1034,101 @@ def calc_angles_from_max(number,angle):
 
 
 
+def pause_menu(win):
+    to_draw, buttons = [], []
+    
+    outer_box = new_button(win["width"]*0.25,win["height"]*0.05, win["width"]*0.5, win["height"]*0.8,
+                           "","","black","white","white",30)
+    to_draw.append(outer_box["button"])
+    to_draw.append(outer_box["text"]) 
+    
+    menu_title = Text(Point(win["width"]/2,win["height"]*0.125), "PAUSED")
+    menu_title.setTextColor("white")
+    menu_title.setSize(30)
+    menu_title.setStyle("bold")
+    to_draw.append(menu_title)
+    
+    menu_token_l = Circle(Point(win["width"]*0.3,win["height"]*0.125), 20)
+    menu_token_l.setFill("gray0")
+    menu_token_l.setOutline("red")
+    to_draw.append(menu_token_l)
+    
+    menu_token_r = Circle(Point(win["width"]*0.7,win["height"]*0.125), 20)
+    menu_token_r.setFill("gray0")
+    menu_token_r.setOutline("red")
+    to_draw.append(menu_token_r)
+    
+    resume_box = new_button(win["width"]*0.33,win["height"]*0.25, win["width"]*0.33, 80,
+                           "RESUME","resume","dark olive green","white","yellow",28)
+    buttons.append(resume_box)
+    to_draw.append(resume_box["button"])
+    to_draw.append(resume_box["text"]) 
+    
+    save_box = new_button(win["width"]*0.33,win["height"]*0.4, win["width"]*0.33, 80,
+                           "SAVE GAME","save","dark slate gray","white","yellow",28)
+    buttons.append(save_box)
+    to_draw.append(save_box["button"])
+    to_draw.append(save_box["text"]) 
+    
+    load_box = new_button(win["width"]*0.33,win["height"]*0.55, win["width"]*0.33, 80,
+                           "LOAD GAME","load","dark slate gray","white","yellow",28)
+    buttons.append(load_box)
+    to_draw.append(load_box["button"])
+    to_draw.append(load_box["text"]) 
+    
+    exit_box = new_button(win["width"]*0.33,win["height"]*0.7, win["width"]*0.33, 80,
+                           "EXIT GAME","exit","dark red","white","yellow",28)
+    buttons.append(exit_box)
+    to_draw.append(exit_box["button"])
+    to_draw.append(exit_box["text"]) 
+    
+    token_number = 0
+    token_dir = "up"
+    
+    for item in to_draw:
+        item.draw(win["win"])
+        
+    play = True
+    
+    while play:
+        ## Put some sort of animation here so screen is not totally frozen when paused ##
+        ## Token circle will slowly fade between white to black ##
+        if token_dir == "up":
+            if token_number < 100:
+                token_number += 1
+            else:
+                token_dir = "down"
+        else:
+            if token_number > 0:
+                token_number -= 1
+            else:
+                token_dir = "up"
+        menu_token_l.setFill("gray{}".format(token_number))
+        menu_token_r.setFill("gray{}".format(token_number))
+        
+        update(30)
+        
+        key = win["win"].checkKey()
+        click = win["win"].checkMouse()
+        
+        if click != None:
+            clicked_on = interpret_click(win,buttons,click)
+            if clicked_on != None:
+                if clicked_on == "resume":  ## IF RESUMING GAME
+                    for item in to_draw:
+                        item.undraw()
+                    return(win,"")
+                elif clicked_on == "save":
+                    pass
+                elif clicked_on == "load":
+                    pass
+                elif clicked_on == "exit":
+                    return(win,"exit")
+    
+    return(win,"")
+
+
+
 
 ## Rather than type out 11 lines of code per button, use this function to do it in 1 line ##
 def new_button(screen_x1,screen_y1,x_size,y_size,text,function,fill_color,text_color,outline_color,text_size):
@@ -2948,7 +3043,9 @@ def game(win,character,data):
         
         if key == "Escape" and menu_cooldown[0] >= menu_cooldown[1]:
             menu_cooldown = [0,10]
-            play = False
+            win,result = pause_menu(win)
+            if result == "exit":
+                play = False
             
         
         elif key == "w" or key == "Up":
@@ -2987,7 +3084,9 @@ def game(win,character,data):
                 character["move"] = [character["move_speed"],0]
                 #print("Character at {}x{}".format(character["map_x"],character["map_y"]))
                 
-                
+        ##
+        ## MANUAL RELOAD
+        ##
         elif key == "r":
             if shoot:
                 if character["weapon"] != None:
@@ -3001,52 +3100,30 @@ def game(win,character,data):
                         shoot_ticks = -character["weapon"]["reload_speed"]
                         shoot = False
                 
-        
+        ##
+        ## SHIFT MODIFIER
+        ##
         elif key == "Shift_L":
             if shift_modifier:
                 shift_modifier = False
             else:
                 shift_modifier = True
             menu_cooldown = [0,10]
-            
-            
+          
+        ##
+        ## INTERACT KEY
+        ##
         elif key == "Return" and menu_cooldown[0] >= menu_cooldown[1]:
             win,map_objs,character,interact_type = interact_nearest_item(win,data,map_objs,character)
             if interact_type == "vendor":
                 menu_cooldown = [0,8]
             
             
-                
         
         
         ##
         ## DEBUG TESTING KEYS ##
         ##
-        elif key == "apostrophe" and menu_cooldown[0] >= menu_cooldown[1]:
-            pass
-            #if "engi_intro"  not in character["bools"]:
-                #win,result = start_dialog_tree(win,data,"engi_intro_1")
-                #menu_cooldown = [0,10]
-                
-                #character["bools"]["engi_intro"] = True
-
-                
-
-            
-        elif key == "slash":
-            item = new_item("Coins","coins","common","img/Coin_1.png","coins 12",
-                            "value 12","A handful of coins.",{})
-            item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-            map_objs.append(item)
-            print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))
-            
-        elif key == "period":
-            item = new_item_from_name(data,"Minor Health Potion")
-            item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-            map_objs.append(item)
-            print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))
-                
-        
         elif key == "bracketright":
             xp = 10*character["level"]
             character,game_bar = gain_xp(win,character,xp,game_bar)
