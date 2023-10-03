@@ -1044,7 +1044,7 @@ def pause_menu(win):
     
     menu_title = Text(Point(win["width"]/2,win["height"]*0.125), "PAUSED")
     menu_title.setTextColor("white")
-    menu_title.setSize(30)
+    menu_title.setSize(32)
     menu_title.setStyle("bold")
     to_draw.append(menu_title)
     
@@ -1059,25 +1059,25 @@ def pause_menu(win):
     to_draw.append(menu_token_r)
     
     resume_box = new_button(win["width"]*0.33,win["height"]*0.25, win["width"]*0.33, 80,
-                           "RESUME","resume","dark olive green","white","yellow",28)
+                           "Resume","resume","dark olive green","white","yellow",24)
     buttons.append(resume_box)
     to_draw.append(resume_box["button"])
     to_draw.append(resume_box["text"]) 
     
     save_box = new_button(win["width"]*0.33,win["height"]*0.4, win["width"]*0.33, 80,
-                           "SAVE GAME","save","dark slate gray","white","yellow",28)
+                           "Save Game","save","dark slate gray","white","yellow",24)
     buttons.append(save_box)
     to_draw.append(save_box["button"])
     to_draw.append(save_box["text"]) 
     
     load_box = new_button(win["width"]*0.33,win["height"]*0.55, win["width"]*0.33, 80,
-                           "LOAD GAME","load","dark slate gray","white","yellow",28)
+                           "Load Game","load","dark slate gray","white","yellow",24)
     buttons.append(load_box)
     to_draw.append(load_box["button"])
     to_draw.append(load_box["text"]) 
     
     exit_box = new_button(win["width"]*0.33,win["height"]*0.7, win["width"]*0.33, 80,
-                           "EXIT GAME","exit","dark red","white","yellow",28)
+                           "Exit Game","exit","dark red","white","yellow",24)
     buttons.append(exit_box)
     to_draw.append(exit_box["button"])
     to_draw.append(exit_box["text"]) 
@@ -1093,6 +1093,7 @@ def pause_menu(win):
     while play:
         ## Put some sort of animation here so screen is not totally frozen when paused ##
         ## Token circle will slowly fade between white to black ##
+        ## Token counts up to 100, then back down to 0, and repeat ad nauseum ##
         if token_dir == "up":
             if token_number < 100:
                 token_number += 1
@@ -1106,23 +1107,26 @@ def pause_menu(win):
         menu_token_l.setFill("gray{}".format(token_number))
         menu_token_r.setFill("gray{}".format(token_number))
         
+        ## Refresh monitor at 30fps ##
+        ## Kept low to prevent pc from using too much energy on this ##
         update(30)
         
-        key = win["win"].checkKey()
+        ## Check if user clicked the mouse
         click = win["win"].checkMouse()
         
+        ## If a click was registered
         if click != None:
-            clicked_on = interpret_click(win,buttons,click)
-            if clicked_on != None:
+            clicked_on = interpret_click(win,buttons,click) ## Figure out what was clicked on
+            if clicked_on != None: ## If a button was clicked on, do something
                 if clicked_on == "resume":  ## IF RESUMING GAME
                     for item in to_draw:
                         item.undraw()
                     return(win,"")
-                elif clicked_on == "save":
+                elif clicked_on == "save": ## NOT HOOKED UP YET
                     pass
-                elif clicked_on == "load":
+                elif clicked_on == "load": ## NOT HOOKED UP YET
                     pass
-                elif clicked_on == "exit":
+                elif clicked_on == "exit": ## EXIT TO MAIN MENU
                     return(win,"exit")
     
     return(win,"")
@@ -1148,6 +1152,27 @@ def new_button(screen_x1,screen_y1,x_size,y_size,text,function,fill_color,text_c
     return(button)
 
 
+def assign_hotkey(win,character,hotkey,item,game_bar):
+    character["hotkey"][hotkey] = item # Set hotkey to item
+    return(win,character,game_bar)
+
+
+## If player hits a key associated with a hotkey, interpret it here ##
+## Hotkeys usually relate to items in inventory ##
+def use_hotkey(win,character,hotkey,game_bar):
+    for item in game_bar:
+        print(item)
+
+    if character["hotkey"][hotkey] != None: ## If something is assigned to this hotkey
+        for item in character["inventory"]: ## Iterate through character inventory
+            if item is character["hotkey"][hotkey]:  ## If the referenced item is here
+                character,item,game_bar = use_item(win,character,item,game_bar) ## Then use that item
+                print("Hotkey {} points to item {}".format(hotkey,item))
+                return(win,character,game_bar)
+    character["hotkey"][hotkey] = None ## If the item is not found, then clear the reference
+    return(win,character,game_bar)
+
+
 ## Takes a list of buttons and a click ##
 ## Returns the function of the button, if any, that was clicked on ##
 ## Otherwise returns None ##
@@ -1159,12 +1184,17 @@ def interpret_click(win,buttons,click):
         screen_x2 = button["button"].getP2().getX()
         screen_y2 = button["button"].getP2().getY()
         
+        ## Make sure x1 and y1 are lower than x2 and y2
         if screen_x1 > screen_x2:
             screen_x1,screen_x2 = screen_x2,screen_x1
         if screen_y1 > screen_y2:
             screen_y1,screen_y2 = screen_y2,screen_y1
         
+        ## Then determine if the click falls within these bounds
         if click_x >= screen_x1 and click_x <= screen_x2 and click_y >= screen_y1 and click_y <= screen_y2:
+            ## If it does, then provide feedback to player in the form of a button flash
+            ## This method actually pauses the game for 0.2 of a second
+            ## A better method is required!
             button["button"].setFill("white")
             button["text"].setTextColor("black")
             update()
@@ -1278,7 +1308,8 @@ def main_menu(win):
         else:
             bg_img.move(-0.1,0)
         
-        update()
+        ## Try to update screen at 60fps for smoothness
+        update(60)
         
         key = win["win"].checkKey()
         click = win["win"].checkMouse()
@@ -1457,6 +1488,8 @@ def new_character(win):
                     character["rings"] = [None,None]
                     character["inventory"] = {}
                     character["bools"] = {}
+                    character["hotkey"] = {
+                        "1": None, "2": None, "3": None, "4": None, "5": None, "6": None, "7": None, "8": None}
                     
                     for i in range(1,6):
                         for j in range(1,11):
@@ -2080,6 +2113,11 @@ def draw_game_bar(win,character):
     shift_mod_text.setSize(28)
     game_bar["shift_mod_text"] = shift_mod_text
     game_bar["to_draw"].append(shift_mod_text)
+    
+    ctrl_mod_text = Text(Point(450,win["height"]-200),"")
+    ctrl_mod_text.setSize(28)
+    game_bar["ctrl_mod_text"] = ctrl_mod_text
+    game_bar["to_draw"].append(ctrl_mod_text)
     
     screen_x = 550
     screen_y = win["height"] - 200
@@ -2772,6 +2810,7 @@ def game(win,character,data):
     swap_with = None
     deselect_next_tick = False
     shift_modifier = False
+    ctrl_modifier = False
     play = True
     paused = False
     inv_open = False
@@ -2823,6 +2862,11 @@ def game(win,character,data):
             game_bar["shift_mod_text"].setText("SHIFT")
         else:
             game_bar["shift_mod_text"].setText("")
+            
+        if ctrl_modifier:
+            game_bar["ctrl_mod_text"].setText("CTRL")
+        else:
+            game_bar["ctrl_mod_text"].setText("")
         
         if new_draw:
             win = redraw_game_bar(win,game_bar)
@@ -2929,7 +2973,7 @@ def game(win,character,data):
                 character["mp"][0] += int((2 + character["level"]))
                 
             ## For items, modifiers are used to determine what to do with them ##
-            if not shift_modifier and clicked_on != None:
+            if not shift_modifier and not ctrl_modifier and clicked_on != None:
                 print("Clicked with NO modifier: {}".format(clicked_on.split()[:2]))
                 if clicked_on.split()[:2] == ["inv", "slot"]: # If button clicked on is an inventory slot
                     print("clicked an inventory slot")
@@ -2952,7 +2996,7 @@ def game(win,character,data):
                     character,item = equip_item(character,"weapon",None)
                     character,item = pick_up_item(character,item)
                     
-            elif clicked_on != None:
+            elif shift_modifier and not ctrl_modifier and clicked_on != None:
                 print("Clicked while shift modifier active")
                 print("  item_selected: {}".format(item_selected))
                 item = None
@@ -3010,6 +3054,12 @@ def game(win,character,data):
                     item_box = show_item_stats(win,character["shield"],click.getX(),click.getY())
                 elif clicked_on == "weapon box" and character["weapon"] != None:
                     item_box = show_item_stats(win,character["weapon"],click.getX(),click.getY())
+                    
+            ## If ctrl modifier is active and something was clicked on
+            elif ctrl_modifier and clicked_on != None:
+                for hotkey in character["hotkey"]:
+                    if hotkey != None:
+                        win,character,game_bar = assign_hotkey(win,character,hotkey,item,game_bar)
                 
                 
         ## Move projectiles and stuff like that
@@ -3109,6 +3159,16 @@ def game(win,character,data):
             else:
                 shift_modifier = True
             menu_cooldown = [0,10]
+        
+        ##
+        ## CTRL MODIFIER
+        ##
+        elif key == "Control_L":
+            if ctrl_modifier:
+                ctrl_modifier = False
+            else:
+                ctrl_modifier = True
+            menu_cooldown = [0,10]
           
         ##
         ## INTERACT KEY
@@ -3117,6 +3177,12 @@ def game(win,character,data):
             win,map_objs,character,interact_type = interact_nearest_item(win,data,map_objs,character)
             if interact_type == "vendor":
                 menu_cooldown = [0,8]
+                
+                
+        
+        elif key in character["hotkey"].keys() and not ctrl_modifier:
+            win,character,game_bar = use_hotkey(win,character,key,game_bar)
+
             
             
         
