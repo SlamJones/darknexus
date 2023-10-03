@@ -1,0 +1,393 @@
+{"map": {
+"0":{
+"level":0, "size":[1000,1000], "bg": "black", "spawn_point": [200,400], "return_point": [400,1150], 
+"bg_img": "img/BG_Nebula_1.png",
+
+"colliders": [
+{"name":"leftwall", "map_x1": 0, "map_y1": 0, "map_x2": 50, "map_y2": 2000, "fill_color":"gray",
+"outline_color":"brown", "type": "collider", "shape": "rect"},
+{"name":"rightwall", "map_x1": 2000, "map_y1": 0, "map_x2": 2050, "map_y2": 2050, "fill_color":"gray", 
+"outline_color":"brown", "type": "collider", "shape": "rect"},
+{"name":"topwall", "map_x1": 0, "map_y1": 0, "map_x2": 2000, "map_y2": 50, "fill_color":"gray", 
+"outline_color":"brown", "type": "collider", "shape": "rect"},
+{"name":"bottomwall", "map_x1": 0, "map_y1": 2000, "map_x2": 2050, "map_y2": 2050, "fill_color":"gray", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"blue1", "map_x1": 450, "map_y1": 400, "map_x2": 500, "map_y2": 500, "fill_color":"blue1", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+
+{"name":"engi_box", "map_x1": 380, "map_y1": 450, "radius": 30, "fill_color":"blue1", 
+"outline_color":"brown",  "type": "collider", "shape": "circ"},
+
+{"name":"capt_box", "map_x1": 900, "map_y1": 1050, "radius": 20, "fill_color":"blue1", 
+"outline_color":"brown",  "type": "collider", "shape": "circ"},
+
+{"name":"blue4", "map_x1": 1000, "map_y1": 200, "map_x2": 1200, "map_y2": 300, "fill_color":"blue4", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"blue4", "map_x1": 1000, "map_y1": 400, "map_x2": 1200, "map_y2": 500, "fill_color":"blue4", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"blue4", "map_x1": 1500, "map_y1": 200, "map_x2": 1700, "map_y2": 300, "fill_color":"blue4", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"blue4", "map_x1": 1500, "map_y1": 400, "map_x2": 1700, "map_y2": 500, "fill_color":"blue4", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"aqua", "map_x1": 1000, "map_y1": 700, "map_x2": 1200, "map_y2": 800, "fill_color":"aqua", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"yellow", "map_x1": 1000, "map_y1": 900, "map_x2": 1600, "map_y2": 1200, "fill_color":"yellow", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"yellow", "map_x1": 1000, "map_y1": 1300, "map_x2": 1600, "map_y2": 1500, "fill_color":"yellow", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"yellow", "map_x1": 1000, "map_y1": 1600, "map_x2": 1600, "map_y2": 1900, "fill_color":"yellow", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"pink", "map_x1": 400, "map_y1": 1600, "radius": 50, "fill_color":"pink", "outline_color":"yellow", 
+ "type": "collider", "shape": "circ"},
+{"name":"magenta", "map_x1": 400, "map_y1": 1200, "radius": 25, "fill_color":"magenta", "outline_color":"yellow", 
+ "type": "portal", "shape": "circ", "teleport_to": "dung 1", "img": "img/Teleport_Pad_1.png"}
+], 
+
+"images": [
+{"name": "floor", "map_x1": 0, "map_y1": 0, "map_x2": 2000, "map_y2": 2000, "img": "img/Floor_Blue_2.png"}
+],
+
+"destroyables": [
+{"name":"barrel", "map_x1": 100, "map_y1": 100, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 200, "map_y1": 100, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 300, "map_y1": 100, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 400, "map_y1": 100, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 500, "map_y1": 100, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 600, "map_y1": 100, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"}
+],
+
+"mobs": [
+{"name": "Training Dummy", "map_x1": 800, "map_y1": 100, "radius": 20, "fill_color":"orange",
+"outline_color":"red", "type": "mob", "shape": "circ", "loot_table": "Small Gear Box",
+"hp": [10000,10000], "dmg": [0,0], "range": 0, "attack_speed": 40}
+],
+
+"vendors": [
+{"name": "Engineer", "map_x1": 380, "map_y1": 450, "radius": 100, "fill_color":"blue1", "outline_color":"lime",
+"type": "vendor", "shape": "circ","inventory": "tbd", "img": "img/Mob_Bug_Hulking.png", "dialog": {
+"None": "engi_intro_1", "engi_intro_1": "engi_1"
+}},
+{"name": "Captain", "map_x1": 900, "map_y1": 1050, "radius": 100, "fill_color":"aqua", "outline_color":"lime",
+"type": "vendor", "shape": "circ", "inventory": "tbd", "img": "img/Mob_Bug_Hulking.png", "dialog": {
+"None": "capt_1"
+}}
+]
+},
+
+
+"1": {
+"level": 1, "size": [2000,2000], "bg": "black", "spawn_point": [200,400], "bg_img": "img/BG_Nebula_2.png",
+
+"colliders": [
+{"name":"leftwall", "map_x1": 0, "map_y1": 0, "map_x2": 50, "map_y2": 5000, "fill_color":"dark slate gray",
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"rightwall", "map_x1": 2000, "map_y1": 0, "map_x2": 2050, "map_y2": 5050, "fill_color":"dark slate gray", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"topwall", "map_x1": 0, "map_y1": 0, "map_x2": 2000, "map_y2": 50, "fill_color":"dark slate gray",
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"midbottomwall", "map_x1": 150, "map_y1": 2000, "map_x2": 2050, "map_y2": 2050, 
+"fill_color":"dark slate gray", "outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"bottomwall", "map_x1": 0, "map_y1": 5000, "map_x2": 2050, "map_y2": 5050, 
+"fill_color":"dark slate gray", "outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"wall", "map_x1": 200, "map_y1": 500, "map_x2": 700, "map_y2": 550, "fill_color":"dark slate gray", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"wall", "map_x1": 0, "map_y1": 1000, "map_x2": 500, "map_y2": 1050, "fill_color":"dark slate gray", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"wall", "map_x1": 500, "map_y1": 1000, "map_x2": 1800, "map_y2": 1050, "fill_color":"dark slate gray", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"wall", "map_x1": 0, "map_y1": 1200, "map_x2": 1300, "map_y2": 1250, "fill_color":"dark slate gray", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"lootroomwall", "map_x1": 1600, "map_y1": 300, "map_x2": 2000, "map_y2": 350, "fill_color":"dark blue", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"lootroomwall", "map_x1": 1600, "map_y1": 450, "map_x2": 1800, "map_y2": 500, "fill_color":"dark blue", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"lootroomwall", "map_x1": 1600, "map_y1": 300, "map_x2": 1650, "map_y2": 500, "fill_color":"dark blue", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"roomtopwall", "map_x1": 650, "map_y1": 2500, "map_x2": 1500, "map_y2": 2550, "fill_color":"dark green", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"roomrightwall", "map_x1": 1500, "map_y1": 2500, "map_x2": 1550, "map_y2": 2950, "fill_color":"dark green", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"roomleftwall", "map_x1": 600, "map_y1": 2500, "map_x2": 650, "map_y2": 2950, "fill_color":"dark green", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"roombottomwall", "map_x1": 100, "map_y1": 2900, "map_x2": 1500, "map_y2": 2950, "fill_color":"dark green", 
+"outline_color":"brown",  "type": "collider", "shape": "rect"},
+{"name":"magenta", "map_x1": 200, "map_y1": 200, "radius": 25, "fill_color":"deep pink", "outline_color":"yellow", 
+ "type": "portal", "shape": "circ", "teleport_to": "town 0", "img": "img/Teleport_Pad_1.png"},
+{"name":"magenta", "map_x1": 4800, "map_y1": 1200, "radius": 25, "fill_color":"magenta", "outline_color":"yellow", 
+ "type": "portal", "shape": "circ", "teleport_to": "dung 2", "img": "img/Teleport_Pad_1.png"}
+ ],  
+
+"images": [
+{"name": "floor", "map_x1": 0, "map_y1": 0, "map_x2": 2000, "map_y2": 5000, "img": "img/Floor_Alien_1.png"}
+],
+
+"mobs": [],
+
+"vendors": [],
+
+"destroyables": [
+{"name":"barrel", "map_x1": 100, "map_y1": 720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 200, "map_y1": 720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 300, "map_y1": 720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 400, "map_y1": 720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 500, "map_y1": 720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 600, "map_y1": 720,"radius": 16, "fill_color":"white", "outline_color":"orange",  
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 1700, "map_y1": 400, "map_x2": 1720, "map_y2": 420, "radius": 20, "fill_color":"dark khaki",  "outline_color":"orange", "type": "destroyable", "shape": "rect", "loot_table": "Small Gear Box"},
+{"name":"barrel", "map_x1": 100, "map_y1": 2720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 200, "map_y1": 2720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 300, "map_y1": 2720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 400, "map_y1": 2720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 500, "map_y1": 2720, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 150, "map_y1": 2800, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 250, "map_y1": 2800, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 350, "map_y1": 2800, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 450, "map_y1": 2800, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"},
+{"name":"barrel", "map_x1": 550, "map_y1": 2800, "radius": 16, "fill_color":"white", "outline_color":"orange", 
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"}
+]
+}
+},
+
+
+
+"destroyables": {
+"Small Barrel": {"radius": 16, "fill_color":"white", "outline_color":"orange",
+ "type": "destroyable", "shape": "circ", "loot_table": "Small Barrel", "img": "img/Barrel_Brown.png"}
+},
+    
+"loot_tables": {
+"Small Barrel": [
+{"chance": 50, "item": {"per_stack": [4,8], "type": "coins"}, "quantity": 4},
+{"chance": 5, "item": {"loot_level": 1, "type": "potion"}, "quantity": 3},
+{"chance": 20, "item": {"loot_level": 1, "type": "ammo"}, "quantity": 6},
+{"chance": 5, "item": {"loot_level": 1, "type": "weapon"}, "quantity": 1}],
+"Barrel":[
+{"chance": 60, "item": {"per_stack": [6,12], "type": "coins"}, "quantity": 6},
+{"chance": 40, "item": {"loot_level": 1, "type": "potion"}, "quantity": 2},
+{"chance": 5, "item": {"loot_level": 1, "type": "weapon"}, "quantity": 1}],
+"Small Box": [
+{"chance": 50, "item": {"per_stack": [5,10], "type": "coins"}, "quantity": 6},
+{"chance": 10, "item": {"loot_level": 1, "type": "potion"}, "quantity": 3},
+{"chance": 50, "item": {"loot_level": 1, "type": "ammo"}, "quantity": 6},
+{"chance": 50, "item": {"loot_level": 1, "type": "weapon"}, "quantity": 1}],
+"Med Box": [
+{"chance": 90, "item": {"loot_level": 1, "type": "potion"}, "quantity": 12}],
+"Ammo Box": [
+{"chance": 90, "item": {"loot_level": 1, "type": "ammo"}, "quantity": 12}],
+"Small Gear Box": [
+{"chance": 75, "item": {"loot_level": 1, "type": "weapon"}, "quantity": 1},
+{"chance": 75, "item": {"loot_level": 1, "type": "armor"}, "quantity": 1},
+{"chance": 75, "item": {"loot_level": 1, "type": "helm"}, "quantity": 1},
+{"chance": 75, "item": {"loot_level": 1, "type": "shield"}, "quantity": 1}]
+},
+    
+"enchantments": {
+"tier 1": 
+{"suffix": 
+[["of the Fox", "dex 2"], ["of the Bear", "str 2"], ["of the Owl", "int 2"],
+["of the Bull", "stam 2"], ["of Pain", "dmg 2 2"], ["of Defense", "armor 2"]],
+"prefix":
+[["Shiny", "str 2"], ["Heavy", "stam 2"], ["Wise", "int 2"], ["Sharp", "dmg 2 2"],
+["Quick", "dex 2"], ["Armored", "armor 2"]]
+}},
+    
+"items": {
+"weapon": [
+{"name": "S1 9mm Pistol", "type": "weapon", "img": "img/Pistol_1.png","damage": [8,12], "effect": {},
+"value": 100, "text": "A common 9mm pistol.", "loot_level": 1, "rarity": "common",
+"usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", "req": {},
+"fire_rate": 10, "ammo": [0,16], "passthru": 0, "range": 1000, "fire_type": "Basic", "speed": 36,
+"proj_radius": 3, "ammo_type": "9mm", "reload_speed": 40, "subtype": "pistol"},
+{"name": "S2 9mm SMG", "type": "weapon", "img": "img/SMG_1.png","damage": [6,10], "effect": {},
+"value": 100, "text": "A common 9mm SMG.", "loot_level": 1, "rarity": "common",
+"usage": "wearable", "slot": "weapon", "fire_mode": "burst 2", "req": {},
+"fire_rate": 4, "ammo": [0,32], "passthru": 0, "range": 800, "fire_type": "Basic", "speed": 40,
+"proj_radius": 3, "ammo_type": "9mm", "reload_speed": 60, "subtype": "smg"},
+{"name": "S3 9mm Pistol", "type": "weapon", "img": "img/Pistol_2.png", "damage": [12,18],
+"effect": {}, "req": {"level": 3},
+"value": 100, "text": "A less common 9mm caliber pistol.", "loot_level": 1, "rarity": "common",
+"usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 12, "ammo": [0,16], "passthru": 0, "range": 1000, "fire_type": "Basic", "speed": 40,
+"proj_radius": 3, "ammo_type": "9mm", "reload_speed": 40, "subtype": "pistol"},
+{"name": "S4 .223 DMR", "type": "weapon", "img": "img/Rifle_1.png", "damage": [20,40],
+"effect": {}, "req": {"level": 1},
+"value": 100, "text": "A marksman rifle used for\nhitting enemies at long range.", "loot_level": 1, 
+"rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 20, "ammo": [0,8], "passthru": 1, "range": 2000, "fire_type": "Basic", "speed": 60,
+"proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "rifle"},
+{"name": "S5 20g Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [5,10],
+"effect": {}, "req": {"level": 1}, "pellets": 7, "angle": 60, 
+"value": 100, "text": "A shotgun.\nEffective at close range.", "loot_level": 1, 
+"rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 18, "ammo": [0,6], "passthru": 1, "range": 800, "fire_type": "Spread", "speed": 36,
+"proj_radius": 3, "ammo_type": "20g", "reload_speed": 60, "subtype": "shotgun"},
+{"name": "S6 .223 'Adder' AR", "type": "weapon", "img": "img/Rifle_2.png", "damage": [12,24],
+"effect": {}, "req": {"level": 1}, 
+"value": 100, "text": "An assault rifle used for heavy combat.", "loot_level": 1, 
+"rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 6, "ammo": [0,26], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
+"proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "Assault Rifle"},
+{"name": "S7 20g Assault Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [5,10],
+"effect": {}, "req": {"level": 1}, "pellets": 5, "angle": 45, 
+"value": 100, "text": "A shotgun.\nEffective at close range.", "loot_level": 1, 
+"rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 10, "ammo": [0,12], "passthru": 1, "range": 800, "fire_type": "Spread", "speed": 36,
+"proj_radius": 3, "ammo_type": "20g", "reload_speed": 80, "subtype": "shotgun"}
+],
+
+"ammo": [
+{"name": "9mm Ammo", "type": "ammo", "img": "img/AmmoBox_9mm.png", "effect": {}, "req": {},
+"value": 10, "text": "Common pistol ammunition\nCompatible with 9mm weapons.", "loot_level": 1, 
+"rarity": "common", "usage": "ammo", "ammo_type": "9mm", "amount": 16, "stackable": "True",
+"quantity": 1},
+{"name": ".223 Ammo", "type": "ammo", "img": "img/AmmoBox_223.png", "effect": {}, "req": {},
+"value": 10, "text": "Common small-bore rifle ammunition\nCompatible with .223 weapons.", 
+"loot_level": 1, "rarity": "common", "usage": "ammo", "ammo_type": ".223", "amount": 16, 
+"stackable": "True", "quantity": 1},
+{"name": "20g Ammo", "type": "ammo", "img": "img/AmmoBox_20g.png", "effect": {}, "req": {},
+"value": 10, "text": "Common shotgun ammunition\nCompatible with 20g shotguns.", 
+"loot_level": 1, "rarity": "common", "usage": "ammo", "ammo_type": "20g", "amount": 16, 
+"stackable": "True", "quantity": 1}
+],
+
+"armor": [
+{"name": "Kevlar Vest", "type": "armor", "img": "img/Armor_Leather_A.png","armor": 5, "effect": {},
+"value": 100, "text": "A common kevlar vest.\nProvides some protection.", "loot_level": 1,
+"usage": "wearable", "rarity": "common", "slot": "armor", "req": {}, "extra": {}}
+],
+
+"helm": [
+{"name": "Kevlar Helmet", "type": "armor", "img": "img/Helm_Metal_A.png","armor": 2, "effect": {},
+"value": 100, "text": "A common kevlar helmet.\nProvides some protection.", "loot_level": 1,
+"usage": "wearable", "rarity": "common", "slot": "helm", "req": {}, "extra": {}}
+],
+
+"shield": [
+{"name": "Energy Shield", "type": "shield", "img": "img/Shield_Metal_A.png", "armor": 2,
+"effect": {"eshield": 15}, 
+"value": 100, "text": "A common energy shield.\nHolds a small eshield charge.", "loot_level": 1,
+"usage": "wearable", "rarity": "common", "slot": "shield", "req": {}, "extra": {}} 
+],
+
+"potion": [
+{"name": "Minor Health Potion", "type": "potion", "img": "img/Potion_Red.png", "effect": {"heal": 20},
+"value": 10, "text": "A simple healing potion", "loot_level": 1, "usage": "consumable", "req": {},
+"rarity": "common"}
+],
+
+"grenade":
+[],
+
+"implant": [
+{"name": "HP Boost 5", "type": "implant", "img": "img/Potion_Green.png", "effect": {"hp": 5},
+"value": 1500, "text": "Permanently boost your max HP by 5.", "loot_level": 1, "rarity": "rare",
+"usage": "consumable", "req": {}, "extra": {}}
+],
+
+"salvage":
+[]
+},
+
+"dialog": {
+"engi_intro_1": 
+{"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
+"text": "What up robot dude!\nLet's get to work robot dude!\nFuckin robots lol",
+"responses": {
+"1": {"text": "Okay", "next": "engi_intro_2"},
+"2": {"text": "Hey fuck you lol", "next": "engi_intro_1a"}
+}},
+
+"engi_intro_1a": 
+{"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
+"text": "No, fuck YOU! Robots smh...",
+"responses": {
+"1": {"text": "...", "next": "engi_intro_2"}
+}},
+
+"engi_intro_2": 
+{"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
+"text": "Here, pick this shit up and use it.\n\nOtherwise fuck off lol",
+"responses": {
+"1": {"text": "Okay", "next": "exit"},
+"2": {"text": "Fork it over, puny human", "next": "exit"},
+"3": {"text": "Eat my shorts", "next": "engi_intro_2a"},
+"4": {"text": "Wubba lubba dub dub!", "next": "engi_intro_2a"}
+}},
+
+"engi_intro_2a": 
+{"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
+"text": "Now where the hell did you\nget THAT phrase from?",
+"responses": {
+"1": {"text": "...", "next": "exit"}
+}},
+
+"engi_1": 
+{"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
+"text": "Looks like you're still functional!\nNow get back in there!!",
+"responses": {
+"1": {"text": "...", "next": "exit"},
+"2": {"text": "Bite my shiny metal ass!", "next": "engi_worried"},
+"3": {"text": "Kill all humans!", "next": "engi_worried"},
+"4": {"text": "Trade", "next": "engi_trade"}
+}},
+
+"engi_worried": 
+{"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
+"text": "*He frowns heavily*\nI think this damn thing is\nglitched again...",
+"responses": {
+"1": {"text": "...", "next": "exit"}
+}},
+
+"engi_trade": 
+{"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
+"text": "Okay then, let's see what you've found!",
+"responses": {
+"1": {"text": "(OPEN TRADE MENU)", "next": "exit"}
+}},
+
+"capt_1": 
+{"img": "img/Portrait_Captain.png", "name": "Captain", "bg_color": "midnight blue",
+"text": "Well, if it isn't my salvage bot!\nYou find anything valuable yet?",
+"responses": {
+"1": {"text": "...", "next": "capt_2"},
+"2": {"text": "Bite my shiny metal ass!", "next": "capt_amused"},
+"3": {"text": "Kill all humans!", "next": "capt_amused"}
+}},
+
+"capt_amused": 
+{"img": "img/Portrait_Captain.png", "name": "Captain", "bg_color": "midnight blue",
+"text": "*He laughs*\nOh my, how humorous!\nWhat a good purchase this bot was!",
+"responses": {
+"1": {"text": "...", "next": "exit"}
+}},
+
+"capt_2": 
+{"img": "img/Portrait_Captain.png", "name": "Captain", "bg_color": "midnight blue",
+"text": "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8",
+"responses": {
+"1": {"text": "... what?", "next": "exit"}
+}}
+
+}
+}
