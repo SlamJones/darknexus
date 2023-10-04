@@ -1159,9 +1159,10 @@ def assign_hotkey(win,character,hotkey,item,game_bar):
 
 ## If player hits a key associated with a hotkey, interpret it here ##
 ## Hotkeys usually relate to items in inventory ##
+## Store hotkey info in game_bar or in character?? ##
 def use_hotkey(win,character,hotkey,game_bar):
-    for item in game_bar:
-        print(item)
+    #for item in game_bar:
+    #    print(item)
 
     if character["hotkey"][hotkey] != None: ## If something is assigned to this hotkey
         for item in character["inventory"]: ## Iterate through character inventory
@@ -1688,49 +1689,66 @@ def draw_char_sheet(win,character):
 #}},
 
 
+## Based on the bools stored by the character, determine which dialog to display
+## Bools are recorded after a dialog occurs the first time
+## Some dialogs are only intended to be seen once
 def choose_dialog_tree(vendor,char_bools):
     print(">>>>    def choose_dialog_tree received vendor dialog of {} and char_bools of {}".format(
         vendor["dialog"],char_bools))
-    dialog_start = vendor["dialog"]["None"]
-    for item in vendor["dialog"].keys():
+    dialog_start = vendor["dialog"]["None"] # Default Dialog option, if no bools are present
+    for item in vendor["dialog"].keys(): # Check through vendors possible dialog options
         print("def choose_dialog_tree comparing char_bool {} against vendor['dialog'].keys(): {}".format(
             item, vendor["dialog"].keys()))
-        if item != "None" and item in char_bools.keys():
-            dialog_start = vendor["dialog"][item]
+        if item != "None" and item in char_bools.keys(): # If vendor has dialog options, and bool is present
+            dialog_start = vendor["dialog"][item] # Set that to the dialog option
+        # Repeats to the end of the list of vendor dialog options
+        # The latest option will be returned
     return(dialog_start)
 
 
+## Called to start a dialog tree where the player receives info and can choose how to respond
+## Other effects may occur after the dialog concludes, thus the returned dialog_result
 def start_dialog_tree(win,data,dialog_start):
-    print(">>  def start_dialog_tree recevied dialog_start: {}".format(dialog_start))
-    dialog = data["dialog"][dialog_start]
-    print(">>  def start_dialog_tree found dialog of {}".format(dialog))
-    win,response = draw_dialog_box(win,dialog["img"],dialog["name"],dialog["bg_color"],dialog["text"],dialog["responses"])
-    print(">>  def draw_dialog_box returned response of {}".format(response))
+    dialog = data["dialog"][dialog_start] # Get the dialog text from data
     
+    # Display the dialog box for the player to respond to
+    win,response = draw_dialog_box(
+        win,dialog["img"],dialog["name"],dialog["bg_color"],dialog["text"],dialog["responses"])
+    
+    # If there are further dialog boxes to be displayed
     while response != "exit":
+        # Get the next dialog text
         dialog = data["dialog"][response]
+        # Display it for player to respond to
         win,response = draw_dialog_box(
             win,dialog["img"],dialog["name"],dialog["bg_color"],dialog["text"],dialog["responses"])
+        # Repeat if the response is anything other than 'exit'
     
+    # Return the start of the dialog tree as the bool
+    # This is to record that this dialog_tree occured
     dialog_result = dialog_start
-    print(">>  def start_dialog_tree returning dialog_result: {}".format(dialog_result))
+    #print(">>  def start_dialog_tree returning dialog_result: {}".format(dialog_result))
     return(win,dialog_result)
 
 
-def process_dialog_result(win,data,map_objs,character,dialog_result):
-    if dialog_result == "None":
+
+## Sometimes things needs to occur after a dialog concludes
+## This is where those things occur, based on the received dialog_result
+def process_dialog_result(win,data,map_objs,character,dialog_result): 
+    if dialog_result == "None":  # Most of the time, no processing is needed
         return(win,map_objs,character)
-    xy_from_center = character["xy_from_center"]
-    character["bools"][dialog_result] = True
+    xy_from_center = character["xy_from_center"] # Gather some needed variables
+    character["bools"][dialog_result] = True # Record that this occured
     
     print("def process_dialog_result gave character bools: {}".format(character["bools"]))
     
+    ## ENGI INTRO ##
+    ## Creates and drops some basic gear for the player to pick up ##
     if dialog_result == "engi_intro_1":
         item = new_item_from_name(data,"Kevlar Vest")
         item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
         map_objs.append(item)
         print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
-
 
         item = new_item_from_name(data,"Kevlar Helmet")
         item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
@@ -1742,13 +1760,7 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
         map_objs.append(item)
         print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
 
-
         item = new_item_from_name(data,"S1 9mm Pistol").copy()
-        item = drop_item(win,item.copy(),int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-        map_objs.append(item)
-        print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
-
-        item = new_item_from_name(data,"S6 .223 'Adder' AR").copy()
         item = drop_item(win,item.copy(),int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
         map_objs.append(item)
         print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
@@ -1765,9 +1777,15 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
             map_objs.append(item)
             print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))
     
+    ## FURTHER EFFECTS GO HERE
+    elif dialog_result == "example":
+        pass
+    
     return(win,map_objs,character)
 
 
+## Draws a dialog box onto the screen, along with a portrait of the character who is speaking
+## Also draws responses that the player can choose from, to continue the dialog tree
 def draw_dialog_box(win,portrait_img_path,name,bg_color,text,responses):
     dialog_box = {}
     dialog_box["box"] = Rectangle(Point(win["width"]*0.125,win["height"]*0.45),Point(win["width"]*0.875,win["height"]*0.8))
@@ -1831,6 +1849,7 @@ def draw_dialog_box(win,portrait_img_path,name,bg_color,text,responses):
     return(win,response)
 
 
+
 def set_rarity_fill_color(item,box,default_color):
     if item == None:
         fill = default_color
@@ -1848,6 +1867,7 @@ def set_rarity_fill_color(item,box,default_color):
     return(box)
 
 
+
 def prepare_vendor(vendor_data):
     vendor = vendor_data.copy()
     
@@ -1858,14 +1878,18 @@ def prepare_vendor(vendor_data):
             
     ## Populate the grid with some items ##
     for i in range(random.randrange(6,11)):
-        i_level = 1
-        item_type = random.choice(["weapon","armor","helm","shield"])
-        vendor["inventory"]["{} 0".format(i)] = new_random_item_from_level(data,i_level,item_type)
+        for j in range(random.randrange(3,5)):
+            i_level = 1
+            item_type = random.choice(["weapon","armor","helm","shield"])
+            vendor["inventory"]["{} {}".format(i,j)] = new_random_item_from_level(data,i_level,item_type)
     
     return(vendor)
         
     
-def draw_vendor_inventory(win,vendor):
+    
+def draw_vendor_inventory(win,vendor_data):
+    vendor = prepare_vendor(vendor_data)
+    
     vend_sheet = {}
     vend_sheet["to_draw"],char_sheet["buttons"] = [],[]
     
@@ -1892,8 +1916,8 @@ def draw_vendor_inventory(win,vendor):
             
             inv_slot = new_button(inv_screen_x,inv_screen_y,size_x,size_y,"","inv slot {} {}".format(grid_x,grid_y),
                                   "silver","black","black",12)
-            item = vendor["inventory"]["{} {}".format(grid_x,grid_y)]
-            inv_slot["contents"] = item #character["inventory"]["{} {}".format(x,y)]
+            item = vendor["inventory"]["{} {}".format(grid_x,grid_y)] ## Get item data
+            inv_slot["contents"] = item 
             
             inv_slot = set_rarity_fill_color(item,inv_slot,"silver")
 
@@ -2125,6 +2149,9 @@ def draw_game_bar(win,character):
     for i in range(1,9):
         nb = new_button(screen_x,screen_y,width,width,str(i),"quick {}".format(i),"tan","black","black",10)
         screen_x += width
+        nb["img_path"] = "img/blank.png"
+        nb["img"] = Image(Point(screen_x + (width/2), screen_y + (width/2)), nb["img_path"])
+        game_bar["quick {}".format(i)] = nb
         game_bar["to_draw"].append(nb["button"])
         game_bar["to_draw"].append(nb["text"])
         game_bar["buttons"].append(nb)
@@ -2765,22 +2792,8 @@ def game(win,character,data):
     to_draw,buttons,map_objs = [],[],[]
     projectiles,mobs,destroyables,colliders = [],[],[],[]
     vfx = []
+    
     ## Set up game ##
-    #win["win"].setBackground(data["map"]["0"]["bg"])
-    
-    #for img in data["map"]["0"]["images"]:
-    #    win,imgs = tile_image(win,img["img"],[img["map_x1"],img["map_y1"]],[img["map_x2"],img["map_y2"]])
-    #    for item in imgs:
-    #        map_objs.append(item)
-    
-    #for obj in data["map"]["0"]["colliders"]:
-    #    nc = new_collider(obj)
-    #    map_objs.append(nc)
-    #    colliders.append(nc)
-        
-    #bg_img = Image(Point(win["width"]/2,win["height"]/2),data["map"]["0"]["bg_img"])    
-    #bg_img.draw(win["win"])
-
     win,character,map_objs,dmap,colliders,bg_img = change_map(win,character,"town 0",data)
     win = undraw_all(win)
     bg_img.draw(win["win"])
@@ -2824,6 +2837,7 @@ def game(win,character,data):
         win,map_objs,projectiles,character,data["map"]["0"]["spawn_point"])
     
     print("Character starts at {}x{}".format(character["map_x"],character["map_y"]))
+    
     
     while play:
         ## Check if a teleport should occur        
@@ -3055,10 +3069,10 @@ def game(win,character,data):
                 elif clicked_on == "weapon box" and character["weapon"] != None:
                     item_box = show_item_stats(win,character["weapon"],click.getX(),click.getY())
                     
-            ## If ctrl modifier is active and something was clicked on
-            elif ctrl_modifier and clicked_on != None:
+            ## If ctrl modifier is active, shift modifier is inactive, and something was clicked on
+            elif ctrl_modifier and not shift_modifier and clicked_on != None:
                 for hotkey in character["hotkey"]:
-                    if hotkey != None:
+                    if hotkey == None:
                         win,character,game_bar = assign_hotkey(win,character,hotkey,item,game_bar)
                 
                 
