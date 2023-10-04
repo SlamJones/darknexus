@@ -1338,6 +1338,7 @@ def titles(win):
         title = Text(Point(win["width"]/2,win["height"]/3),slide[1])
         title.setTextColor("white")
         title.setSize(36)
+        title.setStyle("bold")
         title.draw(win["win"])
         
         # Draw to screen, wait, then undraw and move to next slide
@@ -1369,6 +1370,7 @@ def main_menu(win):
     title = Text(Point(win["width"]/2,120),"Dark Nexus")
     title.setTextColor("white")
     title.setSize(36)
+    title.setStyle("bold")
     to_draw.append(title)
     
     nb = new_button(win["width"]/4,300,win["width"]/2,100,"NEW GAME","new game","black","white","white",24)
