@@ -1,4 +1,4 @@
-# Diablo Clone
+# Dark Nexus
 
 This file will act as both a README, and a Game Design  
 Document.  In it, I will highlight the various features  
