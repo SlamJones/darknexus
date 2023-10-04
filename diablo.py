@@ -1745,43 +1745,32 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
     ## ENGI INTRO ##
     ## Creates and drops some basic gear for the player to pick up ##
     if dialog_result == "engi_intro_1":
-        item = new_item_from_name(data,"Kevlar Vest")
-        item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-        map_objs.append(item)
-        print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
+        
+        ## Basic set of Kevlar Gear, with a lvl 1 basic Pistol and a lvl 3 basic Pistol
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Kevlar Vest",xy_from_center)
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Kevlar Helmet",xy_from_center)
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Energy Shield",xy_from_center)
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"S1 9mm Pistol",xy_from_center)
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"S3 9mm Pistol",xy_from_center)
 
-        item = new_item_from_name(data,"Kevlar Helmet")
-        item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-        map_objs.append(item)
-        print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
-
-        item = new_item_from_name(data,"Energy Shield")
-        item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-        map_objs.append(item)
-        print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
-
-        item = new_item_from_name(data,"S1 9mm Pistol").copy()
-        item = drop_item(win,item.copy(),int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-        map_objs.append(item)
-        print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
-
-        item = new_item_from_name(data,"S3 9mm Pistol").copy()
-        item = add_random_enchantment(item,1,data)
-        item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-        map_objs.append(item)
-        print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
-
+        ## And 5 boxes of 9mm ammo to use with the Pistol
         for i in range(5):
-            item = new_item_from_name(data,"9mm Ammo")
-            item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,64,xy_from_center)
-            map_objs.append(item)
-            print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))
+            win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"9mm Ammo",xy_from_center)
     
     ## FURTHER EFFECTS GO HERE
     elif dialog_result == "example":
         pass
     
     return(win,map_objs,character)
+
+
+def create_and_drop_item_from_name(win,data,map_objs,item_name,xy_from_center):
+    item = new_item_from_name(data,item_name)
+    pickup_radius = 64
+    item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,pickup_radius,xy_from_center)
+    map_objs.append(item)
+    print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
+    return(win,map_objs)
 
 
 ## Draws a dialog box onto the screen, along with a portrait of the character who is speaking
