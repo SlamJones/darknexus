@@ -25,12 +25,15 @@ def import_data():
     return(data)
 
 
+## After importing data, we need to process it to use it in game
 def process_data(data):
     for item in data:
         item = process_data_item(item)
     return(data)
 
 
+## Given a data item, process any encapsulated data items
+## Convert any encountered digits to int, whenever possible
 def process_data_item(data_item):
     print("def process_data_item received {}".format(data_item))
     if type(data_item) in [dict,list]:
@@ -48,6 +51,7 @@ def process_data_item(data_item):
 #    {"chance": 30, "item": {"loot_level": 1, "type": "ammo"}, "quantity": 6},
 #    {"chance": 20, "item": {"loot_level": 1, "type": "weapon"}, "quantity": 1}]
 
+## Based on given loot table, determine actual items contained in container
 def loot_table_drop(win,data,loot_table,screen_x,screen_y,interact_radius,center):
     loot_to_drop = []
     for loot_item in loot_table:
@@ -84,6 +88,7 @@ def loot_table_drop(win,data,loot_table,screen_x,screen_y,interact_radius,center
     return(loot_to_drop) # Should return a list of items that can be immediately dropped to the floor
 
 
+## If a destroyable is hit by a projectile (or hitscan), it explodes and drops its contents
 def destroy_destroyable(win,data,map_objs,destroyable,center):
     # Get a list of loot that is to be dropped
     loot_table = []
@@ -102,6 +107,7 @@ def destroy_destroyable(win,data,map_objs,destroyable,center):
     return(win,map_objs)
                                                                               
 
+## Given an item type and loot level, pick a random item from data that matches those and return it
 def new_random_item_from_level(data,loot_level,item_type):
     new_item = {}
     valid_choices = []
@@ -118,6 +124,7 @@ def new_random_item_from_level(data,loot_level,item_type):
     return(new_item)
 
     
+## Given destroyable data from data file, build and return destroyable
 def new_destroyable(destroyable):
     nd = destroyable.copy()
     if "img" in destroyable.keys():
@@ -135,6 +142,7 @@ def new_destroyable(destroyable):
     return(nd)
 
     
+## Given collider data from data file, build and return the collider
 def new_collider(collider):
     nc = collider.copy()
     if "img" in nc.keys():
@@ -151,6 +159,9 @@ def new_collider(collider):
     return(nc)
 
 
+## Check if item has requirements
+## Determine if character meets thos requirements
+## Return True if they do, False if not
 def check_item_reqs(character,item):
     for req in item["req"].keys():
         if type(item["req"][req]) is int:
@@ -162,6 +173,8 @@ def check_item_reqs(character,item):
     return(True)
 
 
+## Given an item name, find the item in data and return it
+## If item not found in data, returns None
 def new_item_from_name(data,item_name):
     new_item = {}
     for category in data["items"].keys():
@@ -176,6 +189,8 @@ def new_item_from_name(data,item_name):
     return(None)
 
 
+## Modify a piece of gear by adding a random enchantment
+## This generally adds stat or damage bonuses
 def add_random_enchantment(old_item,tier,data):
     item = old_item.copy()
     if "hasPrefix" in item.keys():
@@ -218,9 +233,11 @@ def add_random_enchantment(old_item,tier,data):
 def set_xset():
     os.system('xset r rate {}'.format(20))
     
+## Reset key repeat delay to default
 def reset_xset():
     os.system('xset r rate')
     
+## Get the size of the main monitors screen
 def get_screen_size():
     m = get_monitors()
     return(m[0].width,m[0].height)
@@ -251,6 +268,7 @@ def close_window(win):
 
 ##
 ## MATH CALCULATIONS AND WHATWHAT ##
+## Should be pretty self-explanitory ##
 ##
 def calculate_move_xy(direction,speed):
     move_x = speed * math.sin(math.radians(direction))
@@ -291,16 +309,20 @@ def calc_distance_between_points(p1,p2):
 ##
 
 
+## Determine if weapon has ammo or not
 def check_weapon_ammo(weapon):
     if weapon["ammo"][0] <= 0:
         return(False)
     return(True)
         
         
+## Weapon damage is character damage?
+## Replace with more accurate in-depth functions
 def set_damage(char):
     return(char["weapon"]["damage"])
 
 
+## Used by autoguns, finds the nearest mob and returns direction and distance to it
 def dir_to_nearest_mob(win,char,mobs):
     distance = 10000
     nearest_mob = None
@@ -320,6 +342,9 @@ def dir_to_nearest_mob(win,char,mobs):
     return(direction,distance)
     
     
+## Some skills/gear have autoweapons
+## Autoweapons will automatically fire projectiles at mobs in range
+## Works very similar to regular fire_projectile
 def fire_auto_projectile(win,char,autogun,mobs):
     projectiles = []
     if autogun["ammo"] > 0:
@@ -336,8 +361,8 @@ def fire_auto_projectile(win,char,autogun,mobs):
             
             if autogun["type"] == "Basic":
                 ox,oy = char["obj"].getAnchor().getX(),char["obj"].getAnchor().getY()
-                projectiles = [spawn_projectile(win,char,screen_ox,screen_oy,radius,passthru,aim_dir,autogun["damage"],
-                                                max_dist,o,autogun["speed"])]
+                projectiles = [spawn_projectile(win,char,screen_ox,screen_oy,radius,passthru,
+                                                aim_dir,autogun["damage"],max_dist,o,autogun["speed"])]
 
             elif autogun["type"] == "Spread":
                 number = autogun["pellets"]
@@ -354,6 +379,9 @@ def fire_auto_projectile(win,char,autogun,mobs):
     return(projectiles)
 
 
+## When player attempts to fire a shot
+## Check if weapon has enough ammo
+## If it does, then fire a projectile
 def shoot_button(win,character,projectiles):
     #print("def shoot_button called")
     reloaded = False
@@ -370,6 +398,8 @@ def shoot_button(win,character,projectiles):
     return(projectiles,reloaded)
 
 
+## If player hits 'reload' key, attempt to reload equipped weapon
+## Returns True if reload occured, or False if it failed
 def reload_manually(character):
     reloaded = False
     print("Attempting manual reload")
@@ -380,10 +410,14 @@ def reload_manually(character):
     return(character,reloaded)
 
 
+## Maybe scroll text saying no ammo?
+## Maybe a 'click' no ammo sound?
 def no_ammo_warning(win):
     pass
 
 
+## Check if player has correct ammo
+## If so, then reload weapon
 def attempt_reload_weapon(character,weapon):
     #print(character["inventory"])
     for item_slot in character["inventory"]:
@@ -404,6 +438,7 @@ def attempt_reload_weapon(character,weapon):
     return(character,weapon)
 
 
+## A basic projectile with no special qualities
 def fire_basic(win,char,radius,passthru,char_dir,o,max_dist,damage):
     screen_ox,screen_oy = char["obj"].getAnchor().getX(),char["obj"].getAnchor().getY()
     projectiles = [spawn_projectile(win,char,screen_ox,screen_oy,radius,passthru,char_dir,damage,max_dist,o,
@@ -411,6 +446,7 @@ def fire_basic(win,char,radius,passthru,char_dir,o,max_dist,damage):
     return(projectiles)
 
 
+## Spread projectiles act as a shotgun, firing a fan spread of projectiles centered on characters direction
 def fire_spread(win,char,radius,passthru,char_dir,o,max_dist,damage):
     number = char["weapon"]["pellets"]
     angle = char["weapon"]["angle"]
@@ -424,6 +460,8 @@ def fire_spread(win,char,radius,passthru,char_dir,o,max_dist,damage):
     return(projectiles)
 
 
+## Wide projectiles spawn a line of projectiles, perpendicular to character direction
+## Does not really work at the moment
 def fire_wide(win,char,radius,passthru,char_dir,o,max_dist,damage):    
     ox,oy = char["obj"].getAnchor().getX(),char["obj"].getAnchor().getY()
     if char["direction"] == 0 or char["direction"] == 180:
@@ -453,6 +491,7 @@ def fire_wide(win,char,radius,passthru,char_dir,o,max_dist,damage):
     return(projectiles)
 
 
+## Split projectiles spawn a circle of projectiles when they hit an object
 def fire_split(win,char,radius,passthru,char_dir,o,max_dist,damage):
     o = [{"type":"split","delay":0,"projectiles":char["weapon"]["pellets"],"recursion":0}]
     ox,oy = char["obj"].getAnchor().getX(),char["obj"].getAnchor().getY()
@@ -462,6 +501,7 @@ def fire_split(win,char,radius,passthru,char_dir,o,max_dist,damage):
     return(projectiles)
 
 
+## Shatter projectiles spawn a fan of projectiles when they hit an object
 def fire_shatter(win,char,radius,passthru,char_dir,o,max_dist,damage):
     o = [{"type":"shatter","delay":0,"projectiles":char["weapon"]["pellets"],"max_angle":char["weapon"]["angle"],"recursion":0}]
     ox,oy = char["obj"].getAnchor().getX(),char["obj"].getAnchor().getY()
@@ -471,6 +511,8 @@ def fire_shatter(win,char,radius,passthru,char_dir,o,max_dist,damage):
     return(projectiles)
     
     
+## When told to do so,determines what types of projectiles to create and spawn
+## Uses characters equipped weapon to determine projectile variables
 def fire_projectile(win,char):
     print("\ndef fire_projectile called with weapon {}".format(char["weapon"]["name"]))
     radius = char["weapon"]["proj_radius"]
@@ -498,6 +540,9 @@ def fire_projectile(win,char):
     elif char["weapon"]["fire_type"] == "Shatter":
         projectiles = fire_shatter(win,char,radius,passthru,char_dir,o,max_dist,damage)
     
+    ## ADVANCED PROJECTILE TYPES THAT ARE NOT USED IN GAME YET ##
+    ## Probably better ways of creating them? ##
+    
     #elif char["weapon"]["fire_type"] == "Split (Recursive 1)":
     #    o = [{"type":"split","delay":0,"projectiles":char["weapon"]["pellets"],"recursion":1}]
     #    ox,oy = char["obj"].getAnchor().getX(),char["obj"].getAnchor().getY()
@@ -522,11 +567,13 @@ def fire_projectile(win,char):
     return(projectiles)
     
     
+## Draw all items, in order, in received to_draw list
+## Not really used at the moment, maybe unnecessary?
 def draw_to_draw(win,to_draw):
     print("def draw_to_draw called")
     for item in to_draw:
         item.draw(win["win"])
-    
+   
     
 def spawn_projectile(win,origin,origin_x,origin_y,radius,passthru,direction,damage,max_dist,other,speed):
     to_draw = []
@@ -553,6 +600,8 @@ def spawn_projectile(win,origin,origin_x,origin_y,radius,passthru,direction,dama
     return(projectile)
 
 
+## Iterate through all projectiles, move them by their given movespeed instructions
+## If any have moved far enough, delete them
 def move_projectiles(win,projectiles):
     #print("  def move_projectiles received {} projectiles".format(len(projectiles)))
     for projectile in projectiles:
@@ -570,13 +619,18 @@ def move_projectiles(win,projectiles):
     return(projectiles)
 
 
+## Based on projectile location and direction, determine projectile movespeed instruction
+## Wording can be clarified to remove ambiguousness
 def calc_projectile_direction(projectile):
     direction = projectile["direction"]
     origin_screen_x,origin_screen_y = projectile["obj"].getCenter().getX(),projectile["obj"].getCenter().getY()
     move_x,move_y = calculate_move_xy(direction,projectile["speed"])
     return(move_x,move_y)
                                         
-    
+
+## Determine if a projectile has moved far enough that it should be deleted
+## This is so projectiles don't just travel infinitely through time and space
+## Because that would slow everything down quite a bit
 def check_projectile_deletion(win,projectile):
     #screen_centerX,screen_centerY=projectile["obj"].getCenter().getX(),projectile["obj"].getCenter().getY()
     if projectile["distance"] >= projectile["max_distance"]:
@@ -585,6 +639,7 @@ def check_projectile_deletion(win,projectile):
     return(False)
 
 
+## Get distance between the centers of two circular objects
 def distance_between_objects(obj1,obj2):
     print("def distance_between_objects called")
     screen_o1x,screen_o1y = obj1["obj"].getAnchor().getX(),obj1["obj"].getAnchor().getY()
@@ -597,6 +652,8 @@ def distance_between_objects(obj1,obj2):
     return(distance)
 
 
+## Determine if a projectile phyiscally contacts another object of certain types
+## Some object types are not checked for hits
 def check_projectile_hit(projectile,mobs,map_objs,xy_offset):
     ## If it hits a mob, returns both mob and projectile
     ## If it hits a collider, it returns only the projectile
@@ -633,6 +690,9 @@ def check_projectile_hit(projectile,mobs,map_objs,xy_offset):
     return(None) # Return nothing
 
 
+## Determine if a hit occurred between received start and end points
+## Does not account for projectile radius (but maybe it should?)
+## Can undoubtedly be optimized for speed
 def check_hitscan_hit(projectile,mobs,map_objs,xy_offset,screen_start,screen_end):
     ## If it hits a mob, returns both mob and projectile
     ## If it hits a collider, it returns only the projectile
@@ -705,6 +765,8 @@ def check_hitscan_hit(projectile,mobs,map_objs,xy_offset,screen_start,screen_end
     return(None) # Return nothing
 
 
+## Used in determining hitscan hits
+## Math is hard :(
 def intersects(s0,s1):
     dx0 = s0[1][0] - s0[0][0]
     dx1 = s1[1][0] - s1[0][0]
@@ -718,6 +780,9 @@ def intersects(s0,s1):
     return((p0*p1<=0)&(p2*p3<=0))
 
 
+## Determine if character can move in desired direction
+## Return True if they can make the move
+## Return False if the cannot make the move
 def check_move_colliders(character,map_objs,move):
     move_to = [character["map_x"]-move[0],character["map_y"]-move[1]] # Calculate where character will be after move completes
     for item in map_objs:  # Iterate through all map_objs
@@ -739,6 +804,8 @@ def check_move_colliders(character,map_objs,move):
     return(True)
 
 
+
+## Upon hitting an object, shatter projectiles will spawn several more projectiles in a circular pattern
 def instruct_split(projectiles,instruction):
     i_copy = instruction.copy()
     if instruction["recursion"] > 0:
@@ -778,6 +845,7 @@ def instruct_split(projectiles,instruction):
     return(projectiles)
 
 
+## Upon hitting an object, shatter projectiles will spawn several more projectiles in a fan pattern
 def instruct_shatter(projectiles,instruction):
     i_copy = instruction.copy()
     max_angle = projectile["other"][0]["max_angle"]
@@ -1034,6 +1102,9 @@ def calc_angles_from_max(number,angle):
 
 
 
+## When player hits 'escape' during gameplay
+## Pause the game and display a list of options
+## Display two animated 'tokens' so that screen does not appear completely frozen
 def pause_menu(win):
     to_draw, buttons = [], []
     
@@ -1082,6 +1153,7 @@ def pause_menu(win):
     to_draw.append(exit_box["button"])
     to_draw.append(exit_box["text"]) 
     
+    # Initizalize token variables used for animation
     token_number = 0
     token_dir = "up"
     
@@ -1152,6 +1224,9 @@ def new_button(screen_x1,screen_y1,x_size,y_size,text,function,fill_color,text_c
     return(button)
 
 
+## Work in Progress
+## Intended to allow player to assign specific items to specific hotkeys
+## So when player presses hotkey, the item is equipped or used
 def assign_hotkey(win,character,hotkey,item,game_bar):
     character["hotkey"][hotkey] = item # Set hotkey to item
     return(win,character,game_bar)
@@ -1210,6 +1285,10 @@ def interpret_click(win,buttons,click):
     return(None)
 
 
+## Sometimes when loading a level, game will lag for a few seconds
+## In those cases, throw a loading screen in to make it clear that the game did not freeze
+## Makes players a bit more patient with loading times
+## Maybe have a few different loading screen images to choose from?
 def draw_loading_screen(win):
     win = undraw_all(win)
     loading_screen = {}
@@ -1225,6 +1304,10 @@ def draw_loading_screen(win):
     return(win,loading_screen)
 
 
+## Gray can be represented by gray0 (white) to gray100 (black)
+## Start with black and fade to white
+## Divide sleep time by half per color
+## So that the fade time is exponential
 def fade_to_black(win):
     sleep_time = 1
     for number in range(101):
@@ -1237,14 +1320,18 @@ def fade_to_black(win):
     return(win)
 
 
+## After starting program, and before reaching main menu
+## Titles tell us who made the game and the name of the game
+## Can have as many slides as we need, but 2 is probably enough
 def titles(win):
     win["win"].setBackground("white")
     win = undraw_all(win)
     slides = [["img/LCD_Screen_3.png","SlamTek Presents"],["img/LCD_Screen_2.png","Diablo Clone"]]
     play = True
     
-    win = fade_to_black(win)
+    win = fade_to_black(win) # Fade from black to white (should look kinda cool)
     
+    # Iterate through slide list, displaying the chosen image, then drawing the text on top of that
     for slide in slides:
         title_image = Image(Point(win["width"]/2,win["height"]/2),slide[0])
         title_image.draw(win["win"])
@@ -1252,21 +1339,27 @@ def titles(win):
         title.setTextColor("white")
         title.setSize(36)
         title.draw(win["win"])
+        
+        # Draw to screen, wait, then undraw and move to next slide
         update()
         sleep(2)
         title.undraw()
     return
 
 
+## Main menu of the game
+## Allows player to start a new game, load a saved game, or exit the game
+## Has a background image that slowly scrolls across the screen, and reverses when reaching the screen edge
 def main_menu(win):
-    win = undraw_all(win)
-    to_draw,buttons = [],[]
+    win = undraw_all(win) # Clear anything already drawn to the screen
+    to_draw,buttons = [],[] # Initialize some necessary variables
     
+    ## Collect data from data file
     data = import_data()
     
     win["win"].setBackground("web maroon")
     
-    bg_img_list = ["img/Title_Wide.png"]
+    bg_img_list = ["img/Title_Wide.png"] # Can allow for multiple background images eventually
     
     bg_img = Image(Point(win["width"],win["height"]/2),bg_img_list[0])
     img_width = bg_img.getWidth()
@@ -1336,6 +1429,10 @@ def main_menu(win):
     return
 
 
+## New character screen, player comes here from Main Menu
+## Shows possible character selections, along with their relevant stats and sprite
+## Player can set characters name
+## Maybe allow player to choose a protrait for dialog as well?
 def new_character(win):
     reset_xset()
     win = undraw_all(win)
@@ -1404,7 +1501,7 @@ def new_character(win):
     to_draw.append(nb["text"]) 
     
     
-    ## Set stat defaults for fighter ##
+    ## Set stat defaults for Heavy, as it is selected by default ##
     cstr = 30
     cstam = 15
     cdex = 10
@@ -1514,15 +1611,20 @@ def new_character(win):
     return(character)
 
 
+## Many gear items add bonus stats when equipped
+## This checks them all and returns total stat for a character
 def calc_total_stat(character,stat_name):
-    total_stat = character[stat_name]
+    total_stat = character[stat_name] # Get base unmodified stat from character
     for item_slot in ["weapon","armor","helm","shield"]:
-        if character[item_slot] != None:
-            if stat_name in character[item_slot]["effect"]:
-                total_stat += int(character[item_slot]["effect"][stat_name])
+        if character[item_slot] != None: # If there is an item in the item slot
+            if stat_name in character[item_slot]["effect"]: # Check the item effects for stats
+                total_stat += int(character[item_slot]["effect"][stat_name]) # Modify the returned stat
     return(total_stat)
 
 
+## Draw the left-side panel, which displays many character stats
+## If player has stat points, allows player to assign those points to specific stats
+## Uses whole numbers instead of fractions: not compatible with other monitor resolutions
 def draw_char_sheet(win,character):
     char_sheet = {}
     char_sheet["to_draw"],char_sheet["buttons"] = [],[]
@@ -1764,6 +1866,8 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
     return(win,map_objs,character)
 
 
+## When you need to create an item and immediately drop it to the floor for the player to pick up
+## Saves a few lines of code when it is called
 def create_and_drop_item_from_name(win,data,map_objs,item_name,xy_from_center):
     item = new_item_from_name(data,item_name)
     pickup_radius = 64
@@ -1775,6 +1879,7 @@ def create_and_drop_item_from_name(win,data,map_objs,item_name,xy_from_center):
 
 ## Draws a dialog box onto the screen, along with a portrait of the character who is speaking
 ## Also draws responses that the player can choose from, to continue the dialog tree
+## Should be compatible with different sized monitors, as it uses fractions instead of whole numbers
 def draw_dialog_box(win,portrait_img_path,name,bg_color,text,responses):
     dialog_box = {}
     dialog_box["box"] = Rectangle(Point(win["width"]*0.125,win["height"]*0.45),Point(win["width"]*0.875,win["height"]*0.8))
@@ -1838,7 +1943,7 @@ def draw_dialog_box(win,portrait_img_path,name,bg_color,text,responses):
     return(win,response)
 
 
-
+## Based on received item rarity, change color of received box
 def set_rarity_fill_color(item,box,default_color):
     if item == None:
         fill = default_color
@@ -1856,7 +1961,7 @@ def set_rarity_fill_color(item,box,default_color):
     return(box)
 
 
-
+## Prepare vendor for transactions by giving them items for their inventory
 def prepare_vendor(vendor_data):
     vendor = vendor_data.copy()
     
@@ -1875,7 +1980,8 @@ def prepare_vendor(vendor_data):
     return(vendor)
         
     
-    
+## Display the items a vendor has for sale
+## Should allow player to purchase and sell items from and to the vendor
 def draw_vendor_inventory(win,vendor_data):
     vendor = prepare_vendor(vendor_data)
     
@@ -2040,6 +2146,9 @@ def word_wrap(max_chars,text):
     return(text)
 
 
+## game_bar is a GUI that allows player to see how much health, mana, and xp they have
+## Also includes a quickbar, to which items can be assigned (pending)
+## Also shows if shift or ctrl modifiers are active
 def draw_game_bar(win,character):
     game_bar = {}
     game_bar["to_draw"],game_bar["buttons"] = [],[]
@@ -2150,6 +2259,8 @@ def draw_game_bar(win,character):
     return(game_bar)
 
 
+
+## Undraw, then draw the game_bar, which is most of the player GUI
 def redraw_game_bar(win,game_bar):
     for item in game_bar["to_draw"]:
         item.undraw()
@@ -2157,7 +2268,10 @@ def redraw_game_bar(win,game_bar):
     return(win)
 
 
+## Determine the corners of an info bar to reflect the value of the bar
+## Used by health, mana, and xp bars
 def adjust_bar(win,bar,current_value,max_value,direction,min_x,max_x,min_y,max_y):
+    ## Determine what percent of full the value is
     if current_value != 0:
         percent = current_value/max_value
     else:
@@ -2186,21 +2300,26 @@ def adjust_bar(win,bar,current_value,max_value,direction,min_x,max_x,min_y,max_y
         new_screen_x1 = bar["button"].getP1().getX()
         new_screen_y1 = max_y - new_height
         
-        
+    ## Remove the old info bar
     bar["button"].undraw()
     
-    new_bar = new_button(new_screen_x1, new_screen_y1, new_width, new_height, "", bar["function"], bar["fill_color"],
-                         bar["text_color"],bar["outline_color"], 12)
+    ## Create a new info bar with the new corners
+    new_bar = new_button(new_screen_x1, new_screen_y1, new_width, new_height, "", bar["function"],
+                         bar["fill_color"],bar["text_color"],bar["outline_color"], 12)
           
-    #print("(after) {} x {}\n\n".format(new_bar["button"].getP1(),new_bar["button"].getP2()))
-          
+    ## Draw the new bar
     new_bar["button"].draw(win["win"])
     return(new_bar)
 
 
+## Receive xp
+## Check if character leveled up
+## If so, grant level up effects and reset xp to 0
 def gain_xp(win,character,xp,game_bar):
-    character["xp"][0] += xp
+    character["xp"][0] += xp  # Gain xp
+    ## Check if character leveled up
     if character["xp"][0] >= character["xp"][1]:
+        ## Grant character level up effects such as increased stats and stat points
         character["xp"][0] -= character["xp"][1]
         character["level"] += 1
         character["stat_points"] += 4
@@ -2214,10 +2333,13 @@ def gain_xp(win,character,xp,game_bar):
         
         print("Level Up!  Now level {} ({}/{} xp)".format(character["level"],character["xp"][0],character["xp"][1]))
         
+    ## If xp ended up lower than 0, then set it back to 0
     elif character["xp"][0] < 0:
         character["xp"][0] = 0
        
-            
+    ## Adjust the on-screen xp bar to reflect any changes
+    ## Get the corners of the outer bar
+    ## Then place the inner bar within those edges
     screen_x1,screen_y1 = game_bar["xp_outer"]["button"].getP1().getX(),game_bar["xp_inner"]["button"].getP1().getY()
     screen_x2,screen_y2 = game_bar["xp_outer"]["button"].getP2().getX()-10,game_bar["xp_inner"]["button"].getP2().getY()
     game_bar["to_draw"].remove(game_bar["xp_inner"]["button"])
@@ -2228,16 +2350,19 @@ def gain_xp(win,character,xp,game_bar):
     return(character,game_bar)
 
 
+## Given a list of objects on the map, determine which are close enough for player to see
+## Render those objects, and unrender anything else that has passed out of view range
 def draw_map_objs_in_range(win,map_objs,character):
-    new_draw = False
+    new_draw = False #  If anything new was drawn, pass that info along
     for item in map_objs:
-        if item["type"] != "vfx":
+        if item["type"] != "vfx": # First, check any vfx objects and modify if needed
             if "drawn" not in item.keys():
                 item["drawn"] = False
             if "shape" not in item.keys():
                 item["shape"] = "circ"
                 #print("  Adding item shape to item {}".format(item["name"]))
-
+            
+            ## Determine where the corners of the object are relative to the screen
             if item["shape"] == "rect":
                 screen_x1 = item["map_x1"] - character["map_x"]
                 screen_y1 = item["map_y1"] - character["map_y"]
@@ -2249,18 +2374,20 @@ def draw_map_objs_in_range(win,map_objs,character):
                 screen_x2 = item["map_x1"] - character["map_x"] + item["radius"]
                 screen_y2 = item["map_y1"] - character["map_y"] + item["radius"]
 
-
+            ## Determine if any of the edges are in view
             if (screen_x1 > -win["width"]) or (
                 screen_x2 < win["width"]) or (
                 screen_y1 > -win["height"]) or (
                 screen_y2 < win["height"]):
-                if not item["drawn"]:
+                ## If any of the edges are in view, check if item is drawn
+                if not item["drawn"]: # If the item is not drawn, draw it now and mark it as drawn
                     #print("+DRAWN {} at {},{} x {},{}!".format(item,int_x1,int_y1,int_x2,int_y2))
                     item["obj"].draw(win["win"])
                     item["drawn"] = True
                     new_draw = True
+            ## If none of the edges are in view
             else:
-                if item["drawn"]:
+                if item["drawn"]: # And if the object is drawn, then undraw it and mark it as not drawn
                     #print("-UNDRAWN {} at {},{} x {},{}!".format(item,int_x1,int_y1,int_x2,int_y2))
                     item["obj"].undraw()
                     item["drawn"] = False
@@ -2268,6 +2395,8 @@ def draw_map_objs_in_range(win,map_objs,character):
     return(win,map_objs,new_draw)
 
 
+## Take each drawn item on the map and move it by the received amount
+## This includes projectiles
 def move_map_objs(win,map_objs,projectiles,move):
     for item in map_objs:
         #print(item)
@@ -2279,9 +2408,11 @@ def move_map_objs(win,map_objs,projectiles,move):
     return(map_objs,projectiles)
 
 
+## Returns that minimum and maximum possible damage values for character
 def calculate_damage_range(character):
     damage = []
     
+    ## Each class has a different 'extra damage' stat
     if character["class"] == "heavy":
         stat = "str"
     elif character["class"] == "soldier":
@@ -2289,8 +2420,10 @@ def calculate_damage_range(character):
     elif character["class"] == "technomancer":
         stat = "int"
     
+    ## Get min and max values for possible damage
     damage = [int(character[stat]/4),int(character[stat]/2)]
     
+    # If character has a weapon equipped, add that damage to the total
     if character["weapon"] != None:
         damage[0] += character["weapon"]["damage"][0]
         damage[1] += character["weapon"]["damage"][1]
@@ -2298,6 +2431,7 @@ def calculate_damage_range(character):
     return(damage)
 
 
+## Calculate total armor of character, based on stats and equipped gear
 def calculate_armor(character):
     armor = character["stam"]
     if character["armor"] != None:
@@ -2307,16 +2441,24 @@ def calculate_armor(character):
     if character["shield"] != None:
         armor += character["shield"]["armor"]
     
+    ## Per level, there is a maximum armor amount
     max_armor = character["level"] * 25
+    ## Make sure character does not exceed maximum armor value
     if armor > max_armor:
         armor = max_armor
+    ## Damage received is reduced by a flat % based on armor value
     damage_reduction = (armor / max_armor)/2
     
     return(armor,damage_reduction)
 
 
+## Create a new item based on received parameters
+## Item does not have to exist in data
+## Can create unique items this way
 def new_item(name,typ,rarity,img,effect,value,text,extra_keys):
+    ## Create blank item
     item = {}
+    ## Attach received basic parameters to the item
     item["name"] = name
     item["type"] = typ
     item["img"] = img
@@ -2325,14 +2467,17 @@ def new_item(name,typ,rarity,img,effect,value,text,extra_keys):
     item["effect"] = effect
     item["rarity"] = rarity
     
+    ## If any advanced / extra parameters are included, attach those as well
     for key in extra_keys.keys():   
         item[key] = extra_keys[key] #Move all extra key_value pairs to the main item dict
     
+    ## Determine what sort of usage to attach based on item type
     if typ == "potion" or typ == "scroll":
         item["usage"] = "single use"
     elif typ == "armor" or typ == "helm" or typ == "weapon" or typ == "shield":
         item["usage"] = "wearable"
         item["slot"] = typ
+        ## Gear may have even further effects to attach to the new item
         for stat in effect:
             item[stat] = effect[stat]
     elif typ == "weapon":
@@ -2340,83 +2485,104 @@ def new_item(name,typ,rarity,img,effect,value,text,extra_keys):
         if "passthru" not in extra_keys.keys():
             item["passthru"] = 0
     else:
+        ## If it doesn't fit the established templates, call it a 'misc' usage item
         item["usage"] = "misc"
         
     #print("\n  def new_item returning item {}\n".format(item))
     return(item)
 
 
+## Either receive or heal damage to player
+## Returned dead = True if player was killed by damage received
+## Adjust hp bar on the game bar to reflect new health level
 def change_hp(win,character,hp_delta,game_bar):
-    dead = False
-    character["hp"][0] += int(hp_delta)
-    if character["hp"][0] > character["hp"][1]:
-        character["hp"][0] = character["hp"][1]
-    elif character["hp"][0] <= 0:
-        print("Character died!")
-        dead = True
+    dead = False # Character has not died
+    character["hp"][0] += int(hp_delta) # Add or remove the health
+    if character["hp"][0] > character["hp"][1]: # If character has more health than maximum
+        character["hp"][0] = character["hp"][1] # Set health to maximum
+    elif character["hp"][0] <= 0: # If character health drops below 0
+        print("Character died!") # Then character has died
+        dead = True # And we return dead = True
         
+    ## Now, we adjust the hp bar to reflect what just occurred
     x1,y1 = game_bar["hp_outer"]["button"].getP1().getX(),game_bar["hp_outer"]["button"].getP1().getY()
     x2,y2 = game_bar["hp_outer"]["button"].getP2().getX(),game_bar["hp_outer"]["button"].getP2().getY()
+    ## Undraw the current bar
     game_bar["to_draw"].remove(game_bar["hp_inner"]["button"])
+    ## Get the size of the new bar
     game_bar["hp_inner"] = adjust_bar(
         win,game_bar["hp_inner"],character["hp"][0],character["hp"][1],"vert",x1,x2,y1,y2)
+    ## Prepare to draw the newly adjusted bar on the next tick
     game_bar["to_draw"].append(game_bar["hp_inner"]["button"])
     
     return(character,dead,game_bar)
 
 
+## Attempt to use an item that was selected from inventory
+## Returns the item if it could not be equipped or consumed
 def use_item(win,character,item,game_bar):
     print("def use_item called")
-    dead = False
+    dead = False # Player might be killed, but hasn't yet
         
-    if item["usage"] == "wearable":
+    if item["usage"] == "wearable": # If it is a wearable item, then try to equip it
         if check_item_reqs(character,item):
             character,item = equip_item(character,item["slot"],item)
-            if item != None:
+            if item != None: # If an item is returned, then put that item in inventory
                 character,item = pick_up_item(character,item) 
-        else:
+        else: # Otherwise, explain why player could not equip the item
             print("Could not equip {}, due to {}!".format(item["name"],item["req"]))
         
-    elif item["usage"] == "consumable":
-        if "heal" in item["effect"].keys():
+    elif item["usage"] == "consumable": # If item is used only once
+        ## Check what type of effect is set to occur
+        if "heal" in item["effect"].keys(): # If the item heals the character
             character,dead,game_bar = change_hp(win,character,item["effect"]["heal"],game_bar)
-            item = None
+            item = None # Return no item, since it was consumed in usage
     
     return(character,item,game_bar)
 
 
+## Based on item_slot, equip the item to the character
+## If an item is already in that slot, remove and return it
 def equip_item(character,item_slot,item):
-    return_item = item
-    if character[item_slot] != None:
-        return_item = character[item_slot]
-    else:
-        return_item = None
+    return_item = item # Store the info of the item to be placed into the slot first
+    if character[item_slot] != None: # If there is an item there,
+        return_item = character[item_slot] # Store the info of that item
+    else: # If there is NO item in the slot
+        return_item = None # Then record that no item will be returned
         
-    if item != None:
-        character[item_slot] = item.copy()
-    else:
-        character[item_slot] = None
+    if item != None: # If the item we are trying to equip is an item
+        character[item_slot] = item.copy() # Place a copy of the item in that item slot
+    else: # If the item we are trying to equip is not an item (it might happen idk)
+        character[item_slot] = None # Then the item_slot becomes empty
         
     return(character,return_item)
 
 
+## A box is drawn that displays the stats of the selected item
 def show_item_stats(win,item,x1,y1):
+    ## To make sure box appears entirely on screen
     y_raised = False
+    ## If it might be off the side of the screen, move it back towards the center
     if x1 + 300 > win["width"]:
         x1 -= 300
+    ## If it might be off the bottom of the screen, move it back up towards the center
     if y1 + 400 > win["height"]:
         y1 -= 400
         
+    ## Initialize some variables that we will use
     item_box = []
     drop_y = 0
     
-    print("{} keys".format(len(item.keys())))
+    ## Debug line
+    #print("{} keys".format(len(item.keys())))
     
+    ## Item name text
     item_name = Text(Point(x1 + 200, y1 + 30), item["name"])
     item_name.setSize(16)
     item_name.setStyle("bold")
     item_box.append(item_name)
     
+    ## Rarity and item type text
     text = "{} {}".format(item["rarity"].capitalize(),item["type"].capitalize())
     if item["type"] == "weapon":
         text += " ({})".format(item["subtype"].capitalize())
@@ -2425,10 +2591,12 @@ def show_item_stats(win,item,x1,y1):
     item_name.setStyle("bold")
     item_box.append(item_type)
     
+    ## Cash value of item text
     item_value = Text(Point(x1 + 200, y1 + 90), "Value: {}".format(item["value"]))
     item_value.setSize(10)
     item_box.append(item_value)
     
+    ## Item usage is generally either 'wearable' or 'consumable'
     item_usage = Text(Point(x1 + 200, y1 + 120), item["usage"].capitalize())
     item_usage.setSize(10)
     item_usage.setStyle("italic")
@@ -2500,13 +2668,13 @@ def show_item_stats(win,item,x1,y1):
         item_box.append(item_desc)
         drop_y += extra_drop_y
         
-        
-        
+    ## Descriptive / flavor text is displayed at the bottom of the box
     item_text = Text(Point(x1 + 200, y1 + 290 + drop_y), '"{}"'.format(item["text"]))
     item_text.setSize(10)
     item_text.setStyle("italic")
     item_box.append(item_text)
     
+    ## Set the fill color based on the rarity of the item
     fill = "old lace"
     if item["rarity"] == "uncommon":
         fill = "dark sea green"
@@ -2517,10 +2685,12 @@ def show_item_stats(win,item,x1,y1):
     elif item["rarity"] == "legendary":
         fill = "light salmon"
     
+    ## Now that we know how big the box will be, we can draw the outline box behind it
     item_box_outer = Rectangle(Point(x1,y1),Point(x1 + 400, y1 + 320 + drop_y))
     item_box_outer.setFill(fill)
     item_box_outer.setOutline("slate gray")
     item_box_outer.setWidth(4)
+    ## Insert it to front of list so it is drawn first, and text is drawn on top of it
     item_box.insert(0,item_box_outer)
     
     below_screen = item_box_outer.getP2().getY() - win["height"] + 100
@@ -2539,8 +2709,9 @@ def show_item_stats(win,item,x1,y1):
     return(item_box)
 
 
+## If an item is tagged as 'vfx,' process its effects here
 def process_vfx(win,vfx,map_objs):
-    for item in vfx:
+    for item in vfx: # Iterate through the list of vfx items
         if item["ticks"] <= 0: ## If item has run out of ticks, undraw and remove it from the list
             vfx.remove(item)
             if item in map_objs:
@@ -2553,6 +2724,9 @@ def process_vfx(win,vfx,map_objs):
     return(win,vfx,map_objs)
 
 
+## Creates a line of text, centered on the specified screen coordinates
+## Text will move based on the received scroll_speed list  (ex: [0,10])
+## Text will disappear after ticks have all passed
 def new_scroll_text(win,screen_x,screen_y,text,text_color,text_size,scroll_speed,ticks):
     scroll_text = {}
     scroll_text["obj"] = Text(Point(screen_x,screen_y),text)
@@ -2565,20 +2739,27 @@ def new_scroll_text(win,screen_x,screen_y,text,text_color,text_size,scroll_speed
     return(scroll_text)
 
 
+## A small 'explosion' image, typically used to show projectile hits
 def new_explosion(win,screen_x,screen_y):
-    chosen = random.randrange(1,9)
-    explosion = {}
+    ## There are several different possible images
+    chosen = random.randrange(1,9)  ## Choose one here
+    explosion = {} # Create blank dict for info to be placed into
+    # Based on the chosen image, create that image now
     explosion["obj"] = Image(Point(screen_x,screen_y),"img/Explosion_{}.png".format(chosen))
     explosion["obj"].draw(win["win"])
-    explosion["type"] = "vfx"
-    explosion["ticks"] = 3
+    explosion["type"] = "vfx" # Declare it to be 'vfx' so we know what to do with it
+    explosion["ticks"] = 3 # Image disappears after 3 ticks
     return(explosion)
 
 
+## Roll a random int between given rmin and rmax
 def roll(rmin,rmax):
     return(random.randrange(rmin,rmax))
 
 
+## Adds parameters to an item that allow it to be dropped to the ground
+## Creates the coordinates, image, and other associated variables
+## Item must then be added to map_objs in order for player to interact with it
 def drop_item(win,item,screen_x,screen_y,interact_radius,center):
     new_item = item.copy()
     new_x = random.randrange(screen_x-20,screen_x+21,5)
@@ -2591,6 +2772,8 @@ def drop_item(win,item,screen_x,screen_y,interact_radius,center):
     return(new_item)
 
 
+## Can be passed automatically by code
+## Or called when player attempts to pick up item from the ground
 def pick_up_item(character,item):
     #print("Attempting to pickup item {}".format(item["name"]))
     if item["type"] == "coins":
@@ -2621,6 +2804,8 @@ def pick_up_item(character,item):
     return(character,item)
 
 
+## Returns the nearest item that cn be interacted with
+## Avoids returning certain types of map objects that cannot be picked up, like colliders
 def get_nearest_interactable(win,map_objs,character):
     nearest_item = None
     distance_to = 10000
@@ -2641,6 +2826,7 @@ def get_nearest_interactable(win,map_objs,character):
     return(nearest_item,item_type)
 
 
+## Check distance from character to item and determines if it is within interact range
 def check_interact_distance(character,item):
     offset = 0
     if "radius" in item.keys():
@@ -2653,6 +2839,7 @@ def check_interact_distance(character,item):
     return(False)
 
 
+## Attempt to interact with nearest item on the map
 def interact_nearest_item(win,data,map_objs,character):
     interact_type = None
     item,item_type = get_nearest_interactable(win,map_objs,character)
@@ -2676,23 +2863,28 @@ def interact_nearest_item(win,data,map_objs,character):
     return(win,map_objs,character,interact_type)
 
 
+## On game_bar, weapon info is shown.  This updates that to keep info current
 def set_weapon_text(weapon):
     weapon_name = word_wrap(15,weapon["name"])
     return("{}\n {}/{}".format(weapon_name,weapon["ammo"][0],weapon["ammo"][1]))
 
 
+## Redraw character object, so it appears on top of all other drawn objects on screen
 def redraw_character(win,character):
     character["obj"].undraw()
     character["obj"].draw(win["win"])
     return(win)
 
 
+## If character dies, call this function
 def on_death(win,character):
     character["xp"][0] = 0  # Remove all current level xp
     
     return(win,character)
 
 
+## When moving to a new map, or spawning on first map, this moves all map objects
+## This is so what is drawn colliders and objects match their position relative to player character
 def move_to_spawn(win,map_objs,projectiles,character,spawn_point):
     to_spawn_x = character["map_x"] - spawn_point[0]
     to_spawn_y = character["map_y"] - spawn_point[1]
@@ -2710,6 +2902,8 @@ def move_to_spawn(win,map_objs,projectiles,character,spawn_point):
     return(win,map_objs,projectiles,character,xy_from_center)
 
 
+## Check if player is close enough to a portal to interact with it
+## Interaction is automically triggered if they are close enough
 def check_portal_collision(win,character,map_objs):
     for item in map_objs:
         if item["type"] == "portal":
@@ -2721,10 +2915,12 @@ def check_portal_collision(win,character,map_objs):
     return(None)
 
 
+## Given a map number, return map data from data file
 def get_map_data(data,map_number):
     return(data["map"][map_number])
 
 
+## When player enters a new map, this collects the map data and displays it on screen
 def change_map(win,character,teleport_to,data):
     win = undraw_all(win)
     win,loading_screen = draw_loading_screen(win)
@@ -2753,6 +2949,8 @@ def change_map(win,character,teleport_to,data):
     return(win,character,None,None,None,bg_img)
 
 
+## When spawning into a map, we reset the destroyables to default
+## So if they were destoryed, they are placed back as they were before they were destroyed
 def deploy_destroyables(data,map_number,map_objs,destroyables):
     for destroyable in data["map"][map_number]["destroyables"]:
         nd = new_destroyable(destroyable)
@@ -2762,6 +2960,7 @@ def deploy_destroyables(data,map_number,map_objs,destroyables):
     return(map_objs,destroyables)
 
 
+## Given an area of map and an image, calculate where to place images so they form a seamless image
 def tile_image(win,image_path,point1,point2):
     temp_image = Image(Point(0,0),image_path)
     imgs = []
@@ -2776,6 +2975,7 @@ def tile_image(win,image_path,point1,point2):
     return(win,imgs)
 
 
+## Main game function, called when player chooses to start new game or load a game ##
 def game(win,character,data):
     win = undraw_all(win)
     to_draw,buttons,map_objs = [],[],[]
@@ -3262,6 +3462,8 @@ def game(win,character,data):
     return
 
 
+## Undraw and redraw all items of the character sheet
+## Usually called when any of the items are updated with new text
 def refresh_char_sheet(win,character,char_sheet,buttons):
     for item in char_sheet["to_draw"]:
         item.undraw()
@@ -3275,6 +3477,8 @@ def refresh_char_sheet(win,character,char_sheet,buttons):
     return(win,char_sheet,buttons)
 
 
+## Undraw and redraw all items in teh character inventory sheet
+## Usually called when inventory changes while the sheet is open
 def refresh_inv(win,character,inv,buttons):
     for item in inv["to_draw"]:
         item.undraw()
@@ -3289,6 +3493,9 @@ def refresh_inv(win,character,inv,buttons):
 
 
 
+## First function called
+## Gathers screen size data and opens window
+## Calls titles, then main menu
 def main():
     width,height = get_screen_size()
     win = open_window("Diablo Clone",width,height)
@@ -3299,5 +3506,6 @@ def main():
     print("Farewell!")
     return
     
+## Starts the whole thing!
 main()
     
