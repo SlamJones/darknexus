@@ -214,46 +214,79 @@
     
 "items": {
 "weapon": [
-{"name": "S1 9mm Pistol", "type": "weapon", "img": "img/Pistol_1.png","damage": [8,12], "effect": {},
+{"name": "S1 9mm Pistol", "type": "weapon", "img": "img/Pistol_1.png","damage": [5,11], "effect": {},
 "value": 100, "text": "A common 9mm pistol.", "loot_level": 1, "rarity": "common",
 "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", "req": {},
-"fire_rate": 10, "ammo": [0,16], "passthru": 0, "range": 1000, "fire_type": "Basic", "speed": 36,
+"fire_rate": 12, "ammo": [0,16], "passthru": 0, "range": 1000, "fire_type": "Basic", "speed": 36,
 "proj_radius": 3, "ammo_type": "9mm", "reload_speed": 40, "subtype": "pistol"},
-{"name": "S2 9mm SMG", "type": "weapon", "img": "img/SMG_1.png","damage": [6,10], "effect": {},
+
+{"name": "S2 9mm SMG", "type": "weapon", "img": "img/SMG_1.png","damage": [4,9], "effect": {},
 "value": 100, "text": "A common 9mm SMG.", "loot_level": 1, "rarity": "common",
 "usage": "wearable", "slot": "weapon", "fire_mode": "burst 2", "req": {},
-"fire_rate": 4, "ammo": [0,32], "passthru": 0, "range": 800, "fire_type": "Basic", "speed": 40,
+"fire_rate": 8, "ammo": [0,32], "passthru": 0, "range": 800, "fire_type": "Basic", "speed": 40,
 "proj_radius": 3, "ammo_type": "9mm", "reload_speed": 60, "subtype": "smg"},
-{"name": "S3 9mm Pistol", "type": "weapon", "img": "img/Pistol_2.png", "damage": [12,18],
+
+{"name": "S3 9mm Pistol", "type": "weapon", "img": "img/Pistol_2.png", "damage": [8,18],
 "effect": {}, "req": {"level": 3},
 "value": 100, "text": "A less common 9mm caliber pistol.", "loot_level": 1, "rarity": "common",
 "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
 "fire_rate": 12, "ammo": [0,16], "passthru": 0, "range": 1000, "fire_type": "Basic", "speed": 40,
 "proj_radius": 3, "ammo_type": "9mm", "reload_speed": 40, "subtype": "pistol"},
-{"name": "S4 .223 DMR", "type": "weapon", "img": "img/Rifle_1.png", "damage": [20,40],
+
+{"name": "S4 .223 DMR", "type": "weapon", "img": "img/Rifle_1.png", "damage": [21,28],
 "effect": {}, "req": {"level": 1},
 "value": 100, "text": "A marksman rifle used for\nhitting enemies at long range.", "loot_level": 1, 
 "rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
-"fire_rate": 20, "ammo": [0,8], "passthru": 1, "range": 2000, "fire_type": "Basic", "speed": 60,
+"fire_rate": 20, "ammo": [0,8], "passthru": 2, "range": 2000, "fire_type": "Basic", "speed": 60,
 "proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "rifle"},
-{"name": "S5 20g Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [5,10],
+
+{"name": "S5 20g Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [3,5],
 "effect": {}, "req": {"level": 1}, "pellets": 7, "angle": 60, 
 "value": 100, "text": "A shotgun.\nEffective at close range.", "loot_level": 1, 
 "rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
-"fire_rate": 18, "ammo": [0,6], "passthru": 1, "range": 800, "fire_type": "Spread", "speed": 36,
+"fire_rate": 20, "ammo": [0,6], "passthru": 0, "range": 800, "fire_type": "Spread", "speed": 36,
 "proj_radius": 3, "ammo_type": "20g", "reload_speed": 60, "subtype": "shotgun"},
-{"name": "S6 .223 'Adder' AR", "type": "weapon", "img": "img/Rifle_2.png", "damage": [12,24],
+
+{"name": "S6 .223 'Adder' AR", "type": "weapon", "img": "img/Rifle_2.png", "damage": [8,15],
 "effect": {}, "req": {"level": 1}, 
 "value": 100, "text": "An assault rifle used for heavy combat.", "loot_level": 1, 
 "rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
-"fire_rate": 6, "ammo": [0,26], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
+"fire_rate": 8, "ammo": [0,26], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
 "proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "Assault Rifle"},
-{"name": "S7 20g Assault Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [5,10],
+
+{"name": "S7 20g Assault Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [3,4],
 "effect": {}, "req": {"level": 1}, "pellets": 5, "angle": 45, 
 "value": 100, "text": "A shotgun.\nEffective at close range.", "loot_level": 1, 
 "rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
-"fire_rate": 10, "ammo": [0,12], "passthru": 1, "range": 800, "fire_type": "Spread", "speed": 36,
-"proj_radius": 3, "ammo_type": "20g", "reload_speed": 80, "subtype": "shotgun"}
+"fire_rate": 12, "ammo": [0,12], "passthru": 0, "range": 800, "fire_type": "Spread", "speed": 36,
+"proj_radius": 3, "ammo_type": "20g", "reload_speed": 80, "subtype": "shotgun"},
+
+{"name": "S8 9mm SMG", "type": "weapon", "img": "img/SMG_1.png","damage": [6,14], "effect": {},
+"value": 200, "text": "A common 9mm SMG.", "loot_level": 3, "rarity": "common",
+"usage": "wearable", "slot": "weapon", "fire_mode": "burst 2", "req": {"level": 3},
+"fire_rate": 8, "ammo": [0,32], "passthru": 0, "range": 800, "fire_type": "Basic", "speed": 40,
+"proj_radius": 3, "ammo_type": "9mm", "reload_speed": 60, "subtype": "smg"},
+
+{"name": "S9 20g Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [5,7],
+"effect": {}, "req": {"level": 3}, "pellets": 7, "angle": 60, 
+"value": 200, "text": "A shotgun.\nEffective at close range.", "loot_level": 3, 
+"rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 20, "ammo": [0,6], "passthru": 0, "range": 800, "fire_type": "Spread", "speed": 36,
+"proj_radius": 3, "ammo_type": "20g", "reload_speed": 60, "subtype": "shotgun"},
+
+{"name": "S10 20g Assault Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [4,6],
+"effect": {}, "req": {"level": 3}, "pellets": 5, "angle": 60, 
+"value": 200, "text": "A shotgun.\nEffective at close range.", "loot_level": 3, 
+"rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 12, "ammo": [0,12], "passthru": 0, "range": 800, "fire_type": "Spread", "speed": 36,
+"proj_radius": 3, "ammo_type": "20g", "reload_speed": 60, "subtype": "shotgun"},
+
+{"name": "S11 .223 'Boomslang' AR", "type": "weapon", "img": "img/Rifle_2.png", "damage": [12,23],
+"effect": {}, "req": {"level": 3}, 
+"value": 200, "text": "An assault rifle used for heavy combat.", "loot_level": 3, 
+"rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
+"fire_rate": 8, "ammo": [0,30], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
+"proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "Assault Rifle"}
 ],
 
 "ammo": [
@@ -272,22 +305,35 @@
 ],
 
 "armor": [
-{"name": "Kevlar Vest", "type": "armor", "img": "img/Armor_Leather_A.png","armor": 5, "effect": {},
-"value": 100, "text": "A common kevlar vest.\nProvides some protection.", "loot_level": 1,
-"usage": "wearable", "rarity": "common", "slot": "armor", "req": {}, "extra": {}}
+{"name": "Kevlar Scraps", "type": "armor", "img": "img/Armor_Leather_A.png","armor": 5, "effect": {},
+"value": 100, "text": "A tattered kevlar vest.\nProvides very little protection.", "loot_level": 1,
+"usage": "wearable", "rarity": "common", "slot": "armor", "req": {}, "extra": {}},
+
+{"name": "Kevlar Vest", "type": "armor", "img": "img/Armor_Leather_A.png","armor": 19, "effect": {},
+"value": 200, "text": "A common kevlar vest.\nProvides some protection.", "loot_level": 3,
+"usage": "wearable", "rarity": "common", "slot": "armor", "req": {"level": 3}, "extra": {}}
 ],
 
 "helm": [
-{"name": "Kevlar Helmet", "type": "armor", "img": "img/Helm_Metal_A.png","armor": 2, "effect": {},
+{"name": "Kevlar Cap", "type": "armor", "img": "img/Helm_Metal_A.png","armor": 2, "effect": {},
 "value": 100, "text": "A common kevlar helmet.\nProvides some protection.", "loot_level": 1,
-"usage": "wearable", "rarity": "common", "slot": "helm", "req": {}, "extra": {}}
+"usage": "wearable", "rarity": "common", "slot": "helm", "req": {}, "extra": {}},
+
+{"name": "Kevlar Sallet", "type": "armor", "img": "img/Helm_Metal_A.png","armor": 8, "effect": {},
+"value": 200, "text": "A common kevlar helmet.\nProvides some protection.", "loot_level": 3,
+"usage": "wearable", "rarity": "common", "slot": "helm", "req": {"level": 3}, "extra": {}}
 ],
 
 "shield": [
-{"name": "Energy Shield", "type": "shield", "img": "img/Shield_Metal_A.png", "armor": 2,
+{"name": "Energy Shield", "type": "shield", "img": "img/Shield_Metal_A.png", "armor": 3,
 "effect": {"eshield": 15}, 
 "value": 100, "text": "A common energy shield.\nHolds a small eshield charge.", "loot_level": 1,
-"usage": "wearable", "rarity": "common", "slot": "shield", "req": {}, "extra": {}} 
+"usage": "wearable", "rarity": "common", "slot": "shield", "req": {}, "extra": {}},
+
+{"name": "Energy Shield II", "type": "shield", "img": "img/Shield_Metal_A.png", "armor": 11,
+"effect": {"eshield": 30}, 
+"value": 200, "text": "A common energy shield.\nHolds a small eshield charge.", "loot_level": 3,
+"usage": "wearable", "rarity": "common", "slot": "shield", "req": {"level": 3}, "extra": {}}
 ],
 
 "potion": [

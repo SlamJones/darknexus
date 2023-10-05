@@ -1048,7 +1048,7 @@ def check_for_projectile_hits(win,data,character,game_bar,projectiles,mobs,destr
                     #print(">>    Registered hit against a destroyable: {}".format(hit))
                     if hit[0] != None:
                         #print("hit destroyable {}".format(hit))
-                        character,game_bar = gain_xp(win,character,5,game_bar)
+                        character,game_bar,vfx = gain_xp(win,character,5,game_bar,vfx)
                         win,map_objs = destroy_destroyable(win,data,map_objs,hit[0],center)
                         screen_x,screen_y = hit[0]["map_x1"]-int(center[0]),hit[0]["map_y1"]-int(center[1])
                         
@@ -1161,8 +1161,11 @@ def pause_menu(win):
         item.draw(win["win"])
         
     play = True
+    key_cooldown = [0,10]
     
     while play:
+        if key_cooldown[0] < key_cooldown[1]:
+            key_cooldown[0] += 1
         ## Put some sort of animation here so screen is not totally frozen when paused ##
         ## Token circle will slowly fade between white to black ##
         ## Token counts up to 100, then back down to 0, and repeat ad nauseum ##
@@ -1185,6 +1188,7 @@ def pause_menu(win):
         
         ## Check if user clicked the mouse
         click = win["win"].checkMouse()
+        key = win["win"].checkKey()
         
         ## If a click was registered
         if click != None:
@@ -1200,6 +1204,11 @@ def pause_menu(win):
                     pass
                 elif clicked_on == "exit": ## EXIT TO MAIN MENU
                     return(win,"exit")
+        ## Check if 'escape' key was pressed again
+        if key == "Escape" and key_cooldown[0] >= key_cooldown[1]:
+            for item in to_draw:
+                item.undraw()
+            return(win,"")
     
     return(win,"")
 
@@ -1851,8 +1860,8 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
     if dialog_result == "engi_intro_1":
         
         ## Basic set of Kevlar Gear, with a lvl 1 basic Pistol and a lvl 3 basic Pistol
-        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Kevlar Vest",xy_from_center)
-        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Kevlar Helmet",xy_from_center)
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Kevlar Scraps",xy_from_center)
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Kevlar Cap",xy_from_center)
         win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Energy Shield",xy_from_center)
         win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"S1 9mm Pistol",xy_from_center)
         win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"S3 9mm Pistol",xy_from_center)
@@ -2317,11 +2326,14 @@ def adjust_bar(win,bar,current_value,max_value,direction,min_x,max_x,min_y,max_y
 ## Receive xp
 ## Check if character leveled up
 ## If so, grant level up effects and reset xp to 0
-def gain_xp(win,character,xp,game_bar):
+def gain_xp(win,character,xp,game_bar,vfx):
     character["xp"][0] += xp  # Gain xp
     ## Check if character leveled up
     if character["xp"][0] >= character["xp"][1]:
         character = level_up(character)
+        scroll_text = new_scroll_text(
+            win,win["width"]/2,(win["height"]/2)-100,"LEVEL UP!","white",14,[0,-1],60)
+        vfx.append(scroll_text)
         
     ## If xp ended up lower than 0, then set it back to 0
     elif character["xp"][0] < 0:
@@ -2329,15 +2341,16 @@ def gain_xp(win,character,xp,game_bar):
        
     ## Adjust the on-screen xp bar to reflect any changes
     ## Get the corners of the outer bar
-    ## Then place the inner bar within those edges
     screen_x1,screen_y1 = game_bar["xp_outer"]["button"].getP1().getX(),game_bar["xp_inner"]["button"].getP1().getY()
     screen_x2,screen_y2 = game_bar["xp_outer"]["button"].getP2().getX()-10,game_bar["xp_inner"]["button"].getP2().getY()
     game_bar["to_draw"].remove(game_bar["xp_inner"]["button"])
+    ## Then place the inner bar within those edges
     game_bar["xp_inner"] = adjust_bar(
-        win,game_bar["xp_inner"],character["xp"][0],character["xp"][1],"horiz",screen_x1,screen_x2,screen_y1,screen_y2)
+        win,game_bar["xp_inner"],character["xp"][0],character["xp"][1],"horiz",
+        screen_x1,screen_x2,screen_y1,screen_y2)
     game_bar["to_draw"].append(game_bar["xp_inner"]["button"])
     
-    return(character,game_bar)
+    return(character,game_bar,vfx)
 
 
 def level_up(character):
@@ -3413,11 +3426,11 @@ def game(win,character,data):
         ##
         elif key == "bracketright":
             xp = 10*character["level"]
-            character,game_bar = gain_xp(win,character,xp,game_bar)
+            character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
             
         elif key == "bracketleft":
             xp = -10
-            character,game_bar = gain_xp(win,character,xp,game_bar)
+            character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
             
         elif key == "minus":
             dmg = 10
