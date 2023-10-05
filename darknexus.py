@@ -2321,19 +2321,7 @@ def gain_xp(win,character,xp,game_bar):
     character["xp"][0] += xp  # Gain xp
     ## Check if character leveled up
     if character["xp"][0] >= character["xp"][1]:
-        ## Grant character level up effects such as increased stats and stat points
-        character["xp"][0] -= character["xp"][1]
-        character["level"] += 1
-        character["stat_points"] += 4
-        character["skill_points"] += 1
-        character["xp"][1] = ((character["level"]**1.5) * 150) + 100
-        #character["hp"][1] += int((character["stam"] * 2) ** 1.2)
-        character["hp"][1] += int((character["stam"] * 2) + (character["hp"][1]/5))
-        character["hp"][0] = character["hp"][1]
-        character["mp"][1] += int(character["int"] * 2)
-        character["mp"][0] = character["mp"][1]
-        
-        print("Level Up!  Now level {} ({}/{} xp)".format(character["level"],character["xp"][0],character["xp"][1]))
+        character = level_up(character)
         
     ## If xp ended up lower than 0, then set it back to 0
     elif character["xp"][0] < 0:
@@ -2350,6 +2338,34 @@ def gain_xp(win,character,xp,game_bar):
     game_bar["to_draw"].append(game_bar["xp_inner"]["button"])
     
     return(character,game_bar)
+
+
+def level_up(character):
+    ## Grant character level up effects such as increased stats and stat points
+    character["xp"][0] -= character["xp"][1]
+    character["level"] += 1
+    character["stat_points"] += 4
+    character["skill_points"] += 1
+    character["xp"][1] = ((character["level"]**1.5) * 150) + 100
+    #character["hp"][1] += int((character["stam"] * 2) ** 1.2)
+    character["hp"][1] += int((character["stam"] * 2) + (character["hp"][1]/5))
+    character["hp"][0] = character["hp"][1]
+    character["mp"][1] += int(character["int"] * 2)
+    character["mp"][0] = character["mp"][1]
+    
+    character["str"] += 1
+    character["dex"] += 1
+    character["stam"] += 1
+    character["int"] += 1
+    
+    if character["class"] == "heavy":
+        character["str"] += 1
+    elif character["class"] == "soldier":
+        character["dex"] += 1
+    elif character["class"] == "technomancer":
+        character["int"] += 1
+    
+    return(character)
 
 
 ## Given a list of objects on the map, determine which are close enough for player to see
