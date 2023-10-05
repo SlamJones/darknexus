@@ -3500,8 +3500,7 @@ def game(win,character,data):
         
         ## Check for projectiles hits ##
         if len(projectiles) > 0:
-            projectiles,mobs,destroyables,colliders,map_objs,character,
-            game_bar,vfx = check_for_projectile_hits(
+            projectiles,mobs,destroyables,colliders,map_objs,character,game_bar,vfx = check_for_projectile_hits(
                 win,data,character,game_bar,projectiles,mobs,destroyables,
                 colliders,map_objs,xy_from_center,vfx)
 
