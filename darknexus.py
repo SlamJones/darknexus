@@ -3325,11 +3325,31 @@ def game(win,character,data):
         
         character["move"] = [0,0]
         
+        
+        ##
+        ## CHECK FOR PLAYER INPUT
+        ##
         if key == "Escape" and menu_cooldown[0] >= menu_cooldown[1]:
+            open_pause = True # If no windows are open, then open pause menu
             menu_cooldown = [0,10]
-            win,result = pause_menu(win)
-            if result == "exit":
-                play = False
+            if inv_open:    ## Close inventory panel, if it is open
+                inv_open = False
+                open_pause = False
+                for item in inv["to_draw"]:
+                    item.undraw()
+                for item in inv["buttons"]:
+                    buttons.remove(item)
+            if char_sheet_open: ## Close character sheet, if it is open
+                char_sheet_open = False
+                open_pause = False
+                for item in char_sheet["to_draw"]:
+                    item.undraw()
+                for item in char_sheet["buttons"]:
+                    buttons.remove(item)
+            if open_pause: ## Otherwise, open pause menu
+                win,result = pause_menu(win)
+                if result == "exit":
+                    play = False
             
         
         elif key == "w" or key == "Up":
@@ -3421,41 +3441,9 @@ def game(win,character,data):
             
         
         
-        ##
-        ## DEBUG TESTING KEYS ##
-        ##
-        elif key == "bracketright":
-            xp = 10*character["level"]
-            character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
-            
-        elif key == "bracketleft":
-            xp = -10
-            character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
-            
-        elif key == "minus":
-            dmg = 10
-            character,dead,game_bar = change_hp(win,character,dmg,game_bar)
-            if dead:
-                play = False
-                
-        elif key == "equal":
-            dmg = -10
-            character,dead,game_bar = change_hp(win,character,dmg,game_bar)
-            if dead:
-                play = False
-                
-                
-        ##
-        ## END DEBUG TESTING KEYS ##
-        ##
         
         
-        ## Check for projectiles hits ##
-        if len(projectiles) > 0:
-            projectiles,mobs,destroyables,colliders,map_objs,character,game_bar,vfx = check_for_projectile_hits(
-                win,data,character,game_bar,projectiles,mobs,destroyables,colliders,map_objs,xy_from_center,vfx)
-        
-        
+        ## Check if player is opening or closing any panels
         if menu_cooldown[0] >= menu_cooldown[1]:
             if key.lower() == "c":
                 menu_cooldown = [0,10]
@@ -3485,9 +3473,43 @@ def game(win,character,data):
                     inv = draw_inventory(win,character)
                     for item in inv["buttons"]:
                         buttons.insert(0,item)
+                        
+        ##
+        ## DEBUG TESTING KEYS ##
+        ##
+        elif key == "bracketright":
+            xp = 10*character["level"]
+            character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
+            
+        elif key == "bracketleft":
+            xp = -10
+            character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
+            
+        elif key == "minus":
+            dmg = 10
+            character,dead,game_bar = change_hp(win,character,dmg,game_bar)
+            if dead:
+                play = False
+                
+        elif key == "equal":
+            dmg = -10
+            character,dead,game_bar = change_hp(win,character,dmg,game_bar)
+            if dead:
+                play = False
+        
+        
+        ## Check for projectiles hits ##
+        if len(projectiles) > 0:
+            projectiles,mobs,destroyables,colliders,map_objs,character,
+            game_bar,vfx = check_for_projectile_hits(
+                win,data,character,game_bar,projectiles,mobs,destroyables,
+                colliders,map_objs,xy_from_center,vfx)
 
+        ## Add a tick to menu cooldown if it is active
         if menu_cooldown[1] > 0:
             menu_cooldown[0] += 1
+        
+        ## Lastly, update screen at an attempted rate of 30 frames per second
         update(30)
     
     return
