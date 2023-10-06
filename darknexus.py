@@ -1881,7 +1881,7 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
 ## Saves a few lines of code when it is called
 def create_and_drop_item_from_name(win,data,map_objs,item_name,xy_from_center):
     item = new_item_from_name(data,item_name)
-    pickup_radius = 64
+    pickup_radius = 120
     item = drop_item(win,item,int(win["width"]/2),int(win["height"]/2)-100,pickup_radius,xy_from_center)
     map_objs.append(item)
     print("Created and dropped item {} at {}x{}".format(item["name"],item["map_x1"],item["map_y1"]))   
@@ -2147,14 +2147,27 @@ def draw_inventory(win,character):
 
 ## We need a way to add line breaks procedurally to the text ##
 ## Currently splits words if needed: would be better if it only inserted line breaks in spaces ##
-def word_wrap(max_chars,text):
+def word_wrap(max_len,text):
     ## Max chars on a line is based on how big the screen is ##
-    try:
-        insert = "\n"
-        text = insert.join(text[i:i+max_chars] for i in range(0,len(text),max_chars))
-    except:
-        pass
-    return(text)
+    string_segs = divide_string(text,max_len)
+    for i in range(len(string_segs)-1):
+        if len(string_segs) < i+1:
+            string_segs.append("")
+        while string_segs[i][-1] != " ":
+            string_segs[i+1] = string_segs[i][-1] + string_segs[i+1]
+            string_segs[i] = string_segs[i][:-1]
+    new_text = ""
+    for seg in string_segs:
+        new_text = new_text + seg + "\n"
+    new_text = new_text[:-1]
+    return(new_text)
+
+
+def divide_string(string,max_len):
+    string_segs = []
+    for i in range(0,len(string),max_len):
+        string_segs.append(string[i:i+max_len])
+    return(string_segs)
 
 
 ## game_bar is a GUI that allows player to see how much health, mana, and xp they have
