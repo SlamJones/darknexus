@@ -2145,29 +2145,169 @@ def draw_inventory(win,character):
     return(inv)
 
 
-## We need a way to add line breaks procedurally to the text ##
-## Currently splits words if needed: would be better if it only inserted line breaks in spaces ##
-def word_wrap(max_len,text):
-    ## Max chars on a line is based on how big the screen is ##
-    string_segs = divide_string(text,max_len)
-    for i in range(len(string_segs)-1):
-        if len(string_segs) < i+1:
-            string_segs.append("")
-        while string_segs[i][-1] != " ":
-            string_segs[i+1] = string_segs[i][-1] + string_segs[i+1]
-            string_segs[i] = string_segs[i][:-1]
-    new_text = ""
-    for seg in string_segs:
-        new_text = new_text + seg + "\n"
-    new_text = new_text[:-1]
-    return(new_text)
+
+## Take a string, and warp it so no words are split
+## Preserve any existing newline breaks
+def word_wrap(max_len,original_string):
+    ## Print some feedback for user
+    #print("\nmax_len is {}".format(max_len))
+    #print("string len is {}".format(len(original_string)))
+    #print("string is {}\n".format(original_string))
+    
+    ## If string is not long enough to need wrapping
+    if len(original_string) <= max_len:
+        
+        ## Then return it unmodified
+        return(original_string)
+
+    ## Blank list to store the lines we will return
+    return_string_lines = []
+    
+    ## String lines will be a list of lines
+    string_lines = [original_string]
+    
+    ## Divide string by newlines ##
+    if "\n" in original_string:
+        string_lines = original_string.split("\n")
+        
+    ## Divide each string segment by max_len ##
+    for string_line in string_lines:
+        #print(string_line)
+        
+        ## Divde string into segments based on received int max_len
+        segmented_string = divide_string_by_max_len(string_line,max_len)
+        
+        ## Take the segmented string, and
+        ## Shift characters along the segments if they don't end in a space
+        segmented_string = shift_chars_loop(segmented_string,max_len)
+        
+        ## Compile the list of segments to the final list
+        for string_segment in segmented_string:
+            return_string_lines.append(string_segment)
+    
+    ## Initialize the return string
+    return_string = ""
+    
+    ## Print some feedback text for user
+    #print("\n")
+    #print("(chars)\tline")
+    #print("({})\tmax_len\n".format(max_len))
+    
+    ## Combine each segment into a final return string
+    for line in return_string_lines:
+        print("(" + str(len(line)) + ")\t" + line)
+        return_string = return_string + line + "\n"
+    
+    ## Return final fully formatted string
+    return(return_string)
 
 
-def divide_string(string,max_len):
-    string_segs = []
+
+## Take all segments of a line
+## If the last letter of the segment is not a space
+## ## Then shift that letter to the next segment
+## ## Continue until last letter of the segment is a space
+## ## Then go the the next segment and repeat the process
+## Returns a list of segments with no words split
+def shift_chars_loop(string_segments,max_len):
+    ## Remember how many segments we received (will need this later)
+    initial_string_segments = len(string_segments)
+    
+    ## Print some feedback text for user
+    #print("\n>>> def shift_chars received {} segments\n".format(len(string_segments)))
+    
+    ## Check through each of the string segments that were received
+    for i in range(len(string_segments)):
+        
+        ## If the number of segments is less than the current iteration
+        if len(string_segments) < i+1:
+            
+            ## Add a blank segment to the end to capture any extra letters
+            string_segments.append("")
+            ## This is so all letters have somewhere to be moved to
+            
+    ## Check if the last character of each segment is a space or a period
+    ## If it's not, then shift it to the next segment
+    string_segments = shift_chars(string_segments,max_len)
+    
+    ## Print some feedback text for user
+    #print("\n<<< def shift_chars returning {} segments\n".format(len(string_segments)))
+    
+    ## Check if any new segments have been created
+    while len(string_segments) > initial_string_segments:
+        
+        ## If so, count how many we have now
+        initial_string_segments = len(string_segments)
+        
+        ## And shift any excess characters again
+        string_segments = shift_chars(string_segments,max_len)
+        ## Then check again if any new segments have been created
+        ## Continue until no new segments are created
+    
+    ## Return the modified string segments
+    return(string_segments)
+
+
+
+## Analyze the received string segments
+## If they do not end in a space or a period, then move the last character to the next segment
+## The inention is that we want to NOT split any words
+## Instead we will be moving whole words, character by character, to the next segment
+## Creating new blank segments to move words into if needed
+def shift_chars(string_segments,max_len):
+    
+    ## Iterate through each string segment
+    for i in range(len(string_segments)):
+        
+        ## Print some feedback text for user
+        #print("Analyzing segment: {}".format(string_segments[i]))
+        
+        ## So long as the last character in this segment is neither
+        ## ## A punction mark, OR
+        ## ## If the length of the string segment is greater than max_len
+        punctuation = [" ",".",",","?","!","(",")","[","]","{","}"]
+        
+        ## If this segment is smaller than max_len, then break the loop
+        if len(string_segments[i]) < max_len:
+            break
+        
+        while string_segments[i][-1] not in punctuation or len(string_segments[i]) > max_len:
+            
+            ## Take the last letter and add it to the start of the next segment
+            try:
+                ## If another segment exists after current one, add it to that
+                string_segments[i+1] = string_segments[i][-1] + string_segments[i+1]
+                
+            except:
+                ## If this is the last segment, then make a new segment and add it to that
+                string_segments.append(string_segments[i][-1])
+                
+            ## Then remove the last letter from the current segment
+            string_segments[i] = string_segments[i][:-1]
+            ## Then check again if the last letter is a space or not
+            
+            print(string_segments[i])
+            
+    return(string_segments)
+    
+
+
+## Take a string, returns a list of strings
+## Strings divided by newline character
+def divide_string_by_newlines(string):
+    string_segments = string.split("\n")
+    return(string_segments)
+
+
+
+## Takes a string, returns a list of strings
+## Strings divided by int max_len
+def divide_string_by_max_len(string,max_len):
+    string_segments = []
     for i in range(0,len(string),max_len):
-        string_segs.append(string[i:i+max_len])
-    return(string_segs)
+        string_segments.append(string[i:i+max_len])
+    return(string_segments)
+
 
 
 ## game_bar is a GUI that allows player to see how much health, mana, and xp they have
