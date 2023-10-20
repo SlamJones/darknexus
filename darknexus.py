@@ -1829,9 +1829,10 @@ def start_dialog_tree(win,data,dialog_start):
         win,dialog["img"],dialog["name"],dialog["bg_color"],dialog["text"],dialog["responses"])
     
     # If there are further dialog boxes to be displayed
-    while response != "exit":
+    while response not in ["exit","start_trade"]:
         # Get the next dialog text
         dialog = data["dialog"][response]
+            
         # Display it for player to respond to
         win,response = draw_dialog_box(
             win,dialog["img"],dialog["name"],dialog["bg_color"],dialog["text"],dialog["responses"])
@@ -1839,7 +1840,12 @@ def start_dialog_tree(win,data,dialog_start):
     
     # Return the start of the dialog tree as the bool
     # This is to record that this dialog_tree occured
-    dialog_result = dialog_start
+    print("def start_dialog_tree has final response of {}".format(response))
+    
+    if response == "start_trade":
+        dialog_result = response
+    else:
+        dialog_result = dialog_start
     #print(">>  def start_dialog_tree returning dialog_result: {}".format(dialog_result))
     return(win,dialog_result)
 
@@ -1848,6 +1854,9 @@ def start_dialog_tree(win,data,dialog_start):
 ## Sometimes things needs to occur after a dialog concludes
 ## This is where those things occur, based on the received dialog_result
 def process_dialog_result(win,data,map_objs,character,dialog_result): 
+    return_instructions = ""
+    return_object = None
+    print("def process_dialog_result received dialog_result of {}".format(dialog_result))
     if dialog_result == "None":  # Most of the time, no processing is needed
         return(win,map_objs,character)
     xy_from_center = character["xy_from_center"] # Gather some needed variables
@@ -1870,11 +1879,22 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
         for i in range(5):
             win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"9mm Ammo",xy_from_center)
     
+    elif dialog_result == "start_trade":
+        ## We're gonna make up some random vendor_data for now ##
+        vendor_data = {"name": "default vendor", "inventory": {}}
+        
+        return_object = vendor_data
+        return_instructions = "vend sheet"
+        
+        ## Vend sheet is displayed, but is not interactable
+        ## Do we do the vendor functions here or discretely in their own functions?
+        
+    
     ## FURTHER EFFECTS GO HERE
     elif dialog_result == "example":
         pass
     
-    return(win,map_objs,character)
+    return(win,map_objs,character,return_instructions,return_object)
 
 
 ## When you need to create an item and immediately drop it to the floor for the player to pick up
@@ -1973,31 +1993,33 @@ def set_rarity_fill_color(item,box,default_color):
 
 
 ## Prepare vendor for transactions by giving them items for their inventory
-def prepare_vendor(vendor_data):
+def prepare_vendor(data,vendor_data):
     vendor = vendor_data.copy()
     
     ## Establish inventory grid ##
-    for i in range(1,11):
+    for i in range(1,9):
         for j in range(1,11):
-            vendor["inventory"]["{} {}".format(i,j)] = None
+            vendor["inventory"]["{} {}".format(int(i),int(j))] = None
             
     ## Populate the grid with some items ##
     for i in range(random.randrange(6,11)):
         for j in range(random.randrange(3,5)):
             i_level = 1
             item_type = random.choice(["weapon","armor","helm","shield"])
-            vendor["inventory"]["{} {}".format(i,j)] = new_random_item_from_level(data,i_level,item_type)
+            vendor["inventory"]["{} {}".format(int(i),int(j))] = new_random_item_from_level(
+                data,i_level,item_type)
     
     return(vendor)
-        
+
+
     
 ## Display the items a vendor has for sale
 ## Should allow player to purchase and sell items from and to the vendor
-def draw_vendor_inventory(win,vendor_data):
-    vendor = prepare_vendor(vendor_data)
+def draw_vendor_sheet(win,data,vendor):
     
     vend_sheet = {}
-    vend_sheet["to_draw"],char_sheet["buttons"] = [],[]
+    vend_sheet["to_draw"] = []
+    vend_sheet["buttons"] = []
     
     box = Rectangle(Point(0,0),Point(win["width"]/2,win["height"]))
     box.setFill("slate gray")
@@ -2014,13 +2036,13 @@ def draw_vendor_inventory(win,vendor_data):
     
     
     vend_screen_x,vend_screen_y = 65,200
-    start_screen_x,start_screen_y = inv_screen_x,inv_screen_y
+    start_screen_x,start_screen_y = vend_screen_x,vend_screen_y
     size_x,size_y = 75,75
     ## Draw inventory grid ##
-    for grid_x in range(1,11):
+    for grid_x in range(1,9):
         for grid_y in range(1,11):
             
-            inv_slot = new_button(inv_screen_x,inv_screen_y,size_x,size_y,"","inv slot {} {}".format(grid_x,grid_y),
+            inv_slot = new_button(vend_screen_x,vend_screen_y,size_x,size_y,"","vend slot {} {}".format(grid_x,grid_y),
                                   "silver","black","black",12)
             item = vendor["inventory"]["{} {}".format(grid_x,grid_y)] ## Get item data
             inv_slot["contents"] = item 
@@ -2031,16 +2053,16 @@ def draw_vendor_inventory(win,vendor_data):
             vend_sheet["to_draw"].append(inv_slot["text"])
             vend_sheet["buttons"].append(inv_slot)
             if inv_slot["contents"] != None:
-                img = Image(Point(inv_screen_x + (size_x/2), inv_screen_y + (size_y/2)),inv_slot["contents"]["img"])
-                inv["to_draw"].append(img)
+                img = Image(Point(vend_screen_x + (size_x/2), vend_screen_y + (size_y/2)),inv_slot["contents"]["img"])
+                vend_sheet["to_draw"].append(img)
                 if "quantity" in item.keys():
-                    quantity_text = Text(Point(inv_screen_x + (size_x*0.8), inv_screen_y + (size_y*0.8)),item["quantity"])
+                    quantity_text = Text(Point(vend_screen_x + (size_x*0.8), vend_screen_y + (size_y*0.8)),item["quantity"])
                     quantity_text.setStyle("bold")
                     quantity_text.setSize(18)
                     vend_sheet["to_draw"].append(quantity_text)
-            inv_screen_x += size_x
-        inv_screen_x = start_screen_x
-        inv_screen_y += size_y
+            vend_screen_x += size_x
+        vend_screen_x = start_screen_x
+        vend_screen_y += size_y
     
     
     for item in vend_sheet["to_draw"]:
@@ -2061,6 +2083,13 @@ def draw_inventory(win,character):
     box.setWidth(4)
     inv["box"] = box
     inv["to_draw"].append(box)
+    
+    
+    coin_box = new_button((win["width"]*0.525),30,150,35,"Coins: {}".format(character["coins"]),
+                          "coin box","black","white","white",14)
+    coin_box["button"].setWidth(2)
+    inv["to_draw"].append(coin_box["button"])
+    inv["to_draw"].append(coin_box["text"])
     
     
     helm_box = new_button((win["width"]*0.75)-75,30,150,150,"","helm box","tan","white","white",24)
@@ -3026,6 +3055,8 @@ def check_interact_distance(character,item):
 ## Attempt to interact with nearest item on the map
 def interact_nearest_item(win,data,map_objs,character):
     interact_type = None
+    return_instructions = ""
+    return_object = None
     item,item_type = get_nearest_interactable(win,map_objs,character)
     if check_interact_distance(character,item): # Check if nearest item is close enough to pick up
         if item_type not in ["collider","vendor","portal","mob","img"]:
@@ -3042,9 +3073,10 @@ def interact_nearest_item(win,data,map_objs,character):
             print("Interact with vendor {}".format(item))
             dialog_start = choose_dialog_tree(item,character["bools"])
             win,dialog_result = start_dialog_tree(win,data,dialog_start)
-            win,map_objs,character = process_dialog_result(win,data,map_objs,character,dialog_result)
+            win,map_objs,character,return_instructions,return_object = process_dialog_result(
+                win,data,map_objs,character,dialog_result)
             interact_type = "vendor"
-    return(win,map_objs,character,interact_type)
+    return(win,map_objs,character,interact_type,return_instructions,return_object)
 
 
 ## On game_bar, weapon info is shown.  This updates that to keep info current
@@ -3201,6 +3233,8 @@ def game(win,character,data):
     paused = False
     inv_open = False
     char_sheet_open = False
+    vend_sheet_open = False
+    vendor = None
     teleport_to = None
     shoot = True
     shoot_ticks = 0
@@ -3294,7 +3328,7 @@ def game(win,character,data):
             print("\n A CLICK occurred")
             
             ## FIRE WEAPON ##
-            if not inv_open and not char_sheet_open and shoot and character["weapon"] != None: #and shift_modifier:
+            if not inv_open and not char_sheet_open and not vend_sheet_open and shoot and character["weapon"] != None: #and shift_modifier:
                 new_projectiles = []
                 character["direction"] = coords_to_direction(click.getX()-character["obj"].getAnchor().getX(),
                                                         character["obj"].getAnchor().getY()-click.getY())+90
@@ -3370,6 +3404,14 @@ def game(win,character,data):
                         print("Using item {}".format(item["name"]))
                         character,item,game_bar = use_item(win,character,item,game_bar)
                         character["inventory"][slot] = item
+                if clicked_on.split()[:2] == ["vend", "slot"]: # If button clicked on is an inventory slot
+                    print("clicked a vendor slot")
+                    slot = "{} {}".format(clicked_on.split()[2],clicked_on.split()[3])
+                    #if vendor["inventory"][slot] != None: # If slot is not empty
+                        #item = vendor["inventory"][slot]
+                        #print("Using item {}".format(item["name"]))
+                        #character,item,game_bar = use_item(win,character,item,game_bar)
+                        #character["inventory"][slot] = item
                 if clicked_on == "armor box" and character["armor"] != None:
                     character,item = equip_item(character,"armor",None)
                     character,item = pick_up_item(character,item)
@@ -3417,11 +3459,25 @@ def game(win,character,data):
                             slot_selected = None
                             print("De-selecting item, but NOT UNDRAWING ITEM BOX\n")
                             
-                    elif character["inventory"][slot] == None and (item_selected != None):  # If an item is selected, and clicking an empty inv slot
+                elif clicked_on.split()[:2] == ["vend", "slot"]: # If button clicked on is an inventory slot
+                    print("SHIFT clicked an inventory slot")
+                    slot = "{} {}".format(clicked_on.split()[2],clicked_on.split()[3])
+                    if vendor["inventory"][slot] != None and menu_cooldown[0] > menu_cooldown[1]: # If slot is not empty
+                        item = vendor["inventory"][slot]
+                        #print(" Got item {}".format(item))
+                        if item_selected == None: # If no item has been selected yet
+                            print("* Selecting item {}, OPENING ITEM BOX WINDOW".format(item["name"]))
+                            item_selected = item
+                            slot_selected = slot
+                            item_box = show_item_stats(win,item,click.getX(),click.getY())
+                            item_box_open = True
+                            menu_cooldown = [0,10]
+                            
+                    elif vendor["inventory"][slot] == None and (item_selected != None):  # If an item is selected, and clicking an empty inv slot
                             print("Swapping item to empty slot")
                             swap_with = slot
-                            character["inventory"][slot_selected],character["inventory"][slot] = (
-                                character["inventory"][slot],character["inventory"][slot_selected]) 
+                            vendor["inventory"][slot_selected],vendor["inventory"][slot] = (
+                                vendor["inventory"][slot],vendor["inventory"][slot_selected]) 
                             # Swap selected and just clicked items
                             print("> Swapping item slots, de-selecting items and slots") 
                             item_selected, item, slot_selected, swap_with = None, None, None, None
@@ -3459,6 +3515,8 @@ def game(win,character,data):
             win,char_sheet,buttons = refresh_char_sheet(win,character,char_sheet,buttons)
         if inv_open:
             win,inv,buttons = refresh_inv(win,character,inv,buttons)
+        if vend_sheet_open:
+            win,vend_sheet,buttons = refresh_vend_sheet(win,data,character,vendor,vend_sheet,buttons)
         if item_box != None: # Refresh item box so it appears above open tabs
             for item in item_box:
                 item.undraw()
@@ -3499,6 +3557,14 @@ def game(win,character,data):
                     item.undraw()
                 for item in char_sheet["buttons"]:
                     buttons.remove(item)
+            if vend_sheet_open:
+                vend_sheet_open = False
+                open_pause = False
+                for item in vend_sheet["to_draw"]:
+                    item.undraw()
+                for item in vend_sheet["buttons"]:
+                    buttons.remove(item)
+                
             if open_pause: ## Otherwise, open pause menu
                 win,result = pause_menu(win)
                 if result == "exit":
@@ -3581,23 +3647,37 @@ def game(win,character,data):
         ## INTERACT KEY
         ##
         elif key == "Return" and menu_cooldown[0] >= menu_cooldown[1]:
-            win,map_objs,character,interact_type = interact_nearest_item(win,data,map_objs,character)
+            win,map_objs,character,interact_type,return_instructions,returned_object = interact_nearest_item(
+                win,data,map_objs,character)
+            print(">>>> return_instructions: {}".format(return_instructions))
+            if returned_object != None:
+                vendor_data = returned_object.copy()
             if interact_type == "vendor":
                 menu_cooldown = [0,8]
+                if return_instructions == "vend sheet":
+                    
+                    vendor = prepare_vendor(data,vendor_data)
+                    vend_sheet = draw_vendor_sheet(win,data,vendor)
+                    vend_sheet_open = True
+                    
+                    for item in vend_sheet["buttons"]:
+                        buttons.insert(0,item)
+
+                    ## Open character inventory as well
+                    inv_open = True
+                    inv = draw_inventory(win,character)
+                    for item in inv["buttons"]:
+                        buttons.insert(0,item)
                 
                 
-        
+        ## Check if a hotkey was pressed ##
         elif key in character["hotkey"].keys() and not ctrl_modifier:
             win,character,game_bar = use_hotkey(win,character,key,game_bar)
-
-            
-            
-        
-        
         
         
         ## Check if player is opening or closing any panels
         if menu_cooldown[0] >= menu_cooldown[1]:
+            ## Character sheet button
             if key.lower() == "c":
                 menu_cooldown = [0,10]
                 if char_sheet_open:
@@ -3613,6 +3693,7 @@ def game(win,character,data):
                         buttons.insert(0,item)
 
 
+            ## Inventory button
             elif key.lower() == "i":
                 menu_cooldown = [0,10]
                 if inv_open:
@@ -3626,24 +3707,34 @@ def game(win,character,data):
                     inv = draw_inventory(win,character)
                     for item in inv["buttons"]:
                         buttons.insert(0,item)
+                if vend_sheet_open:
+                    vend_sheet_open = False
+                    for item in vend_sheet["to_draw"]:
+                        item.undraw()
+                    for item in vend_sheet["buttons"]:
+                        buttons.remove(item)
                         
         ##
         ## DEBUG TESTING KEYS ##
         ##
+        ## Increase xp, used to test xp bar and levelling
         elif key == "bracketright":
             xp = 10*character["level"]
             character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
             
+        ## Decrease xp bar
         elif key == "bracketleft":
             xp = -10
             character,game_bar,vfx = gain_xp(win,character,xp,game_bar,vfx)
             
+        ## Take damage
         elif key == "minus":
             dmg = 10
             character,dead,game_bar = change_hp(win,character,dmg,game_bar)
             if dead:
                 play = False
                 
+        ## Heal damage
         elif key == "equal":
             dmg = -10
             character,dead,game_bar = change_hp(win,character,dmg,game_bar)
@@ -3695,6 +3786,19 @@ def refresh_inv(win,character,inv,buttons):
         buttons.insert(0,item)
     
     return(win,inv,buttons)
+
+
+def refresh_vend_sheet(win,data,character,vendor,vend_sheet,buttons):
+    for item in vend_sheet["to_draw"]:
+        item.undraw()
+    for item in vend_sheet["buttons"]:
+        buttons.remove(item)
+        
+    vend_sheet = draw_vendor_sheet(win,data,vendor)
+    for item in vend_sheet["buttons"]:
+        buttons.insert(0,item)
+    
+    return(win,vend_sheet,buttons)
 
 
 

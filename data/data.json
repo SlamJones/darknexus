@@ -375,8 +375,8 @@
 {"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
 "text": "Here, pick this shit up and use it.\n\nOtherwise fuck off lol",
 "responses": {
-"1": {"text": "Okay", "next": "exit"},
-"2": {"text": "Fork it over, puny human", "next": "exit"},
+"1": {"text": "Okay", "next": "exit", "switch": "engi_intro_1"},
+"2": {"text": "Fork it over, puny human", "next": "exit", "switch": "engi_intro_1"},
 "3": {"text": "Eat my shorts", "next": "engi_intro_2a"},
 "4": {"text": "Wubba lubba dub dub!", "next": "engi_intro_2a"}
 }},
@@ -385,7 +385,7 @@
 {"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
 "text": "Now where the hell did you\nget THAT phrase from?",
 "responses": {
-"1": {"text": "...", "next": "exit"}
+"1": {"text": "...", "next": "exit", "switch": "engi_intro_1"}
 }},
 
 "engi_1": 
@@ -409,7 +409,7 @@
 {"img": "img/Portrait_Engineer.png", "name": "Engineer", "bg_color": "dark slate gray",
 "text": "Okay then, let's see what you've found!",
 "responses": {
-"1": {"text": "(OPEN TRADE MENU)", "next": "exit"}
+"1": {"text": "(OPEN TRADE MENU)", "next": "start_trade", "switch": "start_trade"}
 }},
 
 "capt_1": 
