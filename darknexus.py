@@ -2085,14 +2085,14 @@ def draw_inventory(win,character):
     inv["to_draw"].append(box)
     
     
-    coin_box = new_button((win["width"]*0.525),30,150,35,"Coins: {}".format(character["coins"]),
-                          "coin box","black","white","white",14)
+    coin_box = new_button((win["width"]*0.75)-375,20,200,35,"Coins: {}".format(character["coins"]),
+                          "coin box","black","white","white",12)
     coin_box["button"].setWidth(2)
     inv["to_draw"].append(coin_box["button"])
     inv["to_draw"].append(coin_box["text"])
     
     
-    helm_box = new_button((win["width"]*0.75)-75,30,150,150,"","helm box","tan","white","white",24)
+    helm_box = new_button((win["width"]*0.75)-75,20,150,150,"","helm box","tan","white","white",24)
     helm_box["button"].setWidth(3)
     inv["helm_box"] = helm_box
     inv["to_draw"].append(helm_box["button"])
@@ -2104,43 +2104,43 @@ def draw_inventory(win,character):
         inv["to_draw"].append(helm_img)
     
     
-    armor_box = new_button((win["width"]*0.75)-75,230,150,200,"","armor box","tan","white","white",24)
+    armor_box = new_button((win["width"]*0.75)-75,200,150,200,"","armor box","tan","white","white",24)
     armor_box["button"].setWidth(3)
     inv["armor_box"] = armor_box
     inv["to_draw"].append(armor_box["button"])
     inv["to_draw"].append(armor_box["text"])
     inv["buttons"].append(armor_box)
     if character["armor"] != None:
-        armor_img = Image(Point((win["width"]*0.75),330),character["armor"]["img"])
+        armor_img = Image(Point((win["width"]*0.75),300),character["armor"]["img"])
         armor_box = set_rarity_fill_color(character["armor"],armor_box,"tan")
         inv["to_draw"].append(armor_img)
     
     
-    weapon_box = new_button((win["width"]*0.75)-325,230,150,200,"","weapon box","tan","white","white",24)
+    weapon_box = new_button((win["width"]*0.75)-325,200,150,200,"","weapon box","tan","white","white",24)
     weapon_box["button"].setWidth(3)
     inv["weapon_box"] = weapon_box
     inv["to_draw"].append(weapon_box["button"])
     inv["to_draw"].append(weapon_box["text"])
     inv["buttons"].append(weapon_box)
     if character["weapon"] != None:
-        weapon_img = Image(Point((win["width"]*0.75)-250,330),character["weapon"]["img"])
+        weapon_img = Image(Point((win["width"]*0.75)-250,300),character["weapon"]["img"])
         weapon_box = set_rarity_fill_color(character["weapon"],weapon_box,"tan")
         inv["to_draw"].append(weapon_img)
     
     
-    shield_box = new_button((win["width"]*0.75)+175,230,150,200,"","shield box","tan","white","white",24)
+    shield_box = new_button((win["width"]*0.75)+175,200,150,200,"","shield box","tan","white","white",24)
     shield_box["button"].setWidth(3)
     inv["shield_box"] = shield_box
     inv["to_draw"].append(shield_box["button"])
     inv["to_draw"].append(shield_box["text"])
     inv["buttons"].append(shield_box)
     if character["shield"] != None:
-        shield_img = Image(Point((win["width"]*0.75)+250,330),character["shield"]["img"])
+        shield_img = Image(Point((win["width"]*0.75)+250,300),character["shield"]["img"])
         shield_box = set_rarity_fill_color(character["shield"],shield_box,"tan")
         inv["to_draw"].append(shield_img)
     
     
-    inv_screen_x,inv_screen_y = (win["width"]/2)+65,480
+    inv_screen_x,inv_screen_y = (win["width"]/2)+65,440
     start_screen_x,start_screen_y = inv_screen_x,inv_screen_y
     size_x,size_y = 75,75
     ## Draw inventory grid ##
