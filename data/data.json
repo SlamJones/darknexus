@@ -269,7 +269,9 @@
 "value": 200, "text": "A common 9mm SMG.", "loot_level": 3, "rarity": "common",
 "usage": "wearable", "slot": "weapon", "fire_mode": "burst 2", "req": {"level": 3},
 "fire_rate": 8, "ammo": [0,32], "passthru": 0, "range": 800, "fire_type": "Basic", "speed": 40,
-"proj_radius": 3, "ammo_type": "9mm", "reload_speed": 60, "subtype": "smg"},
+"proj_radius": 3, "ammo_type": "9mm", "reload_speed": 60, "subtype": "smg",
+"selectable_fire_mode": ["semiauto", "burst"],
+"burst": {"shots_total": 2, "shots_to_fire": 0, "fire_delay": 4, "current_ticks": 0}},
 
 {"name": "S9 20g Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [5,7],
 "effect": {}, "req": {"level": 3}, "pellets": 7, "angle": 60, 
@@ -289,8 +291,10 @@
 "effect": {}, "req": {"level": 3}, 
 "value": 200, "text": "An assault rifle used for heavy combat.", "loot_level": 3, 
 "rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
-"fire_rate": 8, "ammo": [0,30], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
-"proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "Assault Rifle"}
+"fire_rate": 9, "ammo": [0,30], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
+"proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "Assault Rifle",
+"selectable_fire_mode": ["semiauto", "burst"],
+"burst": {"shots_total": 3, "shots_to_fire": 0, "fire_delay": 3, "current_ticks": 0}}
 ],
 
 "ammo": [
