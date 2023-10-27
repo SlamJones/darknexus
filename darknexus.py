@@ -3428,7 +3428,8 @@ def game(win,character,data):
                 print(" The item box is NOT OPEN")
             
             ## DETERMINE WHAT WAS CLICKED ON ##
-            clicked_on = interpret_click(win,buttons,click)
+            ## THIS HAS BEEN MOVED TO OCCUR EARLIER ##
+            #clicked_on = interpret_click(win,buttons,click)
             
             if clicked_on == "dex up box":
                 character["stat_points"] -= 1

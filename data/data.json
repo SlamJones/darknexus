@@ -253,10 +253,10 @@
 "effect": {}, "req": {"level": 1}, 
 "value": 100, "text": "An assault rifle used for heavy combat.", "loot_level": 1, 
 "rarity": "common", "usage": "wearable", "slot": "weapon", "fire_mode": "semiauto", 
-"fire_rate": 8, "ammo": [0,26], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
+"fire_rate": 9, "ammo": [0,26], "passthru": 1, "range": 1600, "fire_type": "Basic", "speed": 58,
 "proj_radius": 4, "ammo_type": ".223", "reload_speed": 80, "subtype": "Assault Rifle",
 "selectable_fire_mode": ["semiauto", "burst"],
-"burst": {"shots_total": 2, "shots_to_fire": 0, "fire_delay": 4, "current_ticks": 0}},
+"burst": {"shots_total": 3, "shots_to_fire": 0, "fire_delay": 3, "current_ticks": 0}},
 
 {"name": "S7 20g Assault Shotgun", "type": "weapon", "img": "img/Shotgun_1.png", "damage": [3,4],
 "effect": {}, "req": {"level": 1}, "pellets": 5, "angle": 45, 
