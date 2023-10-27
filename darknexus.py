@@ -392,9 +392,10 @@ def burst_fire_controller(win,character,projectiles):
             if burst["current_ticks"] <= 0:
                 burst["shots_to_fire"] -= 1
                 burst["current_ticks"] = burst["fire_delay"]
-                new_projectiles=fire_projectile(win,character)
-                for projectile in new_projectiles:
-                    projectiles.append(projectile)
+                if character["weapon"]["ammo"][0] > 0:
+                    new_projectiles=fire_projectile(win,character)
+                    for projectile in new_projectiles:
+                        projectiles.append(projectile)
     
     return(win,character,projectiles)
 
@@ -406,7 +407,8 @@ def shoot_button(win,character,projectiles):
     #print("def shoot_button called")
     reloaded = False
     if check_weapon_ammo(character["weapon"]):
-        if "burst" in character["weapon"].keys():
+        if character["weapon"]["fire_mode"] == "burst":
+        #if "burst" in character["weapon"].keys():
             character["weapon"]["burst"]["shots_to_fire"] = character["weapon"]["burst"]["shots_total"]
             character["weapon"]["burst"]["current_ticks"] = character["weapon"]["burst"]["fire_delay"]
             win,character,projectiles = burst_fire_controller(win,character,projectiles)
@@ -3110,7 +3112,22 @@ def interact_nearest_item(win,data,map_objs,character):
 ## On game_bar, weapon info is shown.  This updates that to keep info current
 def set_weapon_text(weapon):
     weapon_name = word_wrap(15,weapon["name"])
-    return("{}\n {}/{}".format(weapon_name,weapon["ammo"][0],weapon["ammo"][1]))
+    return("{}\n {}/{}\n{}".format(
+        weapon_name,weapon["ammo"][0],weapon["ammo"][1],weapon["fire_mode"].capitalize()))
+
+
+## Changes fire mode if possible
+## Moves current fire mode to end of list
+## This is so if there are more than 2 modes, it will cycle through them
+def change_fire_mode(weapon):
+    if "selectable_fire_mode" in weapon.keys():
+        for fire_mode in weapon["selectable_fire_mode"]:
+            if weapon["fire_mode"] != fire_mode:
+                weapon["fire_mode"] = fire_mode
+                weapon["selectable_fire_mode"].remove(weapon["fire_mode"])
+                weapon["selectable_fire_mode"].append(weapon["fire_mode"])
+                break
+    return(weapon)
 
 
 ## Redraw character object, so it appears on top of all other drawn objects on screen
@@ -3357,10 +3374,12 @@ def game(win,character,data):
         
         if click != None:  # If a click occurred
             print("\n A CLICK occurred")
+            clicked_on = interpret_click(win,buttons,click)
             
+                
             ## FIRE WEAPON ##
             
-            if not inv_open and not char_sheet_open and not vend_sheet_open and shoot and character["weapon"] != None: #and shift_modifier:
+            if clicked_on == None and not inv_open and not char_sheet_open and not vend_sheet_open and shoot and character["weapon"] != None: #and shift_modifier:
                 new_projectiles = []
                 character["direction"] = coords_to_direction(click.getX()-character["obj"].getAnchor().getX(),
                                                         character["obj"].getAnchor().getY()-click.getY())+90
@@ -3380,6 +3399,9 @@ def game(win,character,data):
                         projectiles.append(p)
                 #for p in new_projectiles:
                 #    projectiles.append(p)
+                
+            elif clicked_on == "attack" and character["weapon"] != None:
+                character["weapon"] = change_fire_mode(character["weapon"])
             
             ## SELECT AN ITEM ##
             if item_selected != None:
