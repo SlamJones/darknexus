@@ -379,6 +379,26 @@ def fire_auto_projectile(win,char,autogun,mobs):
     return(projectiles)
 
 
+def burst_fire_controller(win,character,projectiles):
+    if character["weapon"] != None:
+        #if "burst" in character["weapon"].keys():
+        if character["weapon"]["fire_mode"] == "burst":
+            burst = character["weapon"]["burst"]
+        else:
+            return(win,character,projectiles)
+        #print("\n> def burst_fire_controller has burst of {}\n".format(burst))
+        if burst["shots_to_fire"] > 0:
+            burst["current_ticks"] -= 1
+            if burst["current_ticks"] <= 0:
+                burst["shots_to_fire"] -= 1
+                burst["current_ticks"] = burst["fire_delay"]
+                new_projectiles=fire_projectile(win,character)
+                for projectile in new_projectiles:
+                    projectiles.append(projectile)
+    
+    return(win,character,projectiles)
+
+
 ## When player attempts to fire a shot
 ## Check if weapon has enough ammo
 ## If it does, then fire a projectile
@@ -386,9 +406,14 @@ def shoot_button(win,character,projectiles):
     #print("def shoot_button called")
     reloaded = False
     if check_weapon_ammo(character["weapon"]):
-        new_projectiles=fire_projectile(win,character)
-        for projectile in new_projectiles:
-            projectiles.append(projectile)
+        if "burst" in character["weapon"].keys():
+            character["weapon"]["burst"]["shots_to_fire"] = character["weapon"]["burst"]["shots_total"]
+            character["weapon"]["burst"]["current_ticks"] = character["weapon"]["burst"]["fire_delay"]
+            win,character,projectiles = burst_fire_controller(win,character,projectiles)
+        else:
+            new_projectiles=fire_projectile(win,character)
+            for projectile in new_projectiles:
+                projectiles.append(projectile)
     else:
         no_ammo_warning(win)
         character,character["weapon"] = attempt_reload_weapon(character,character["weapon"])
@@ -1873,7 +1898,7 @@ def process_dialog_result(win,data,map_objs,character,dialog_result):
         win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Kevlar Cap",xy_from_center)
         win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"Energy Shield",xy_from_center)
         win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"S1 9mm Pistol",xy_from_center)
-        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"S3 9mm Pistol",xy_from_center)
+        win,map_objs = create_and_drop_item_from_name(win,data,map_objs,"S2 9mm SMG",xy_from_center)
 
         ## And 5 boxes of 9mm ammo to use with the Pistol
         for i in range(5):
@@ -2085,7 +2110,8 @@ def draw_inventory(win,character):
     inv["to_draw"].append(box)
     
     
-    coin_box = new_button((win["width"]*0.75)-375,20,200,35,"Coins: {}".format(character["coins"]),
+    coin_box = new_button((win["width"]/2)+65,win["height"]-150,200,35,"Coins: {}".format(
+        character["coins"]),
                           "coin box","black","white","white",12)
     coin_box["button"].setWidth(2)
     inv["to_draw"].append(coin_box["button"])
@@ -2224,7 +2250,9 @@ def word_wrap(max_len,original_string):
     
     ## Combine each segment into a final return string
     for line in return_string_lines:
-        print("(" + str(len(line)) + ")\t" + line)
+        if line[-1] == " ":
+            line = line[:-1]
+        #print("(" + str(len(line)) + ")\t" + line)
         return_string = return_string + line + "\n"
     
     ## Return final fully formatted string
@@ -2315,7 +2343,7 @@ def shift_chars(string_segments,max_len):
             string_segments[i] = string_segments[i][:-1]
             ## Then check again if the last letter is a space or not
             
-            print(string_segments[i])
+            #print(string_segments[i])
             
     return(string_segments)
     
@@ -3292,6 +3320,9 @@ def game(win,character,data):
         if new_draw:
             win = redraw_game_bar(win,game_bar)
             win = redraw_character(win,character)
+            
+        ## Burst fire controller called each frame when applicable ##    
+        win,character,projectiles = burst_fire_controller(win,character,projectiles)
         
         key = win["win"].checkKey()
         click = win["win"].checkMouse()
@@ -3328,6 +3359,7 @@ def game(win,character,data):
             print("\n A CLICK occurred")
             
             ## FIRE WEAPON ##
+            
             if not inv_open and not char_sheet_open and not vend_sheet_open and shoot and character["weapon"] != None: #and shift_modifier:
                 new_projectiles = []
                 character["direction"] = coords_to_direction(click.getX()-character["obj"].getAnchor().getX(),
